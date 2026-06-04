@@ -324,13 +324,15 @@ The reviewing team will act as informed stakeholders and peer software engineers
 
 ### Artifacts for review
 
-Each team should submit a Requirements Review Packet containing:
+Each team should submit a Requirements Review Packet containing (per page 16 of the Course Project.pdf):
 
 1. User stories
 2. Acceptance criteria
 3. User roles/personas
 4. Open questions and assumptions
 5. Known risks
+
+The domain model is not required for the packet, but it is a nice-to-include item.
 
 ### Conducting the review
 
