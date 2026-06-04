@@ -32,6 +32,15 @@ This artifact also carries three working assumptions that the team has not yet
 approved. They are flagged inline at the affected use cases and collected in the
 assumptions and open questions table in Section 6.
 
+A note on the current-scope companion document: the team also maintains a
+narrower, current-scope version of these use cases at
+`current-state/current-state-use-cases.md`. That document is a deliberately
+reduced slice that models the core exchange as a request queue and names the
+requester role Recipient. This full artifact is the complete plan and the
+requirements-faithful source of truth. Section 8 maps the two documents use case
+by use case, by goal, so this artifact can be used for a quick manual backfill of
+the current-scope document if it is ever needed.
+
 ## 2. Actors and Roles
 
 These are the roles the system defines. Poster and Claimant are not separate
@@ -720,3 +729,81 @@ that will cover them, so reviewers can confirm nothing was dropped.
 | Automated tests for permissions and the exchange flow | QA plan and automated test suite |
 | At least 70 percent backend business-logic coverage | QA plan and QA summary |
 | Pull requests, no direct commits to main, weekly board updates | Project process artifacts, GitHub settings, meeting notes, project board |
+
+## 8. Mapping to the current-scope document
+
+The team maintains a narrower, current-scope version of these use cases at
+`current-state/current-state-use-cases.md`. That document is read-only; this
+artifact is the only one this mapping changes. The two are not parallel copies.
+They differ in four ways, so use this section, not the use case numbers, to line
+them up:
+
+- Scope. This artifact is the full plan, UC-01 through UC-24. The current-scope
+  document is a smaller slice with its own UC-01 through UC-12. It leaves out
+  listing creation and editing, pickup and completion, reviews, the dashboard,
+  admin, and notifications on purpose, and it uses seeded listings instead of
+  letting a poster create them.
+- Model. This artifact models the exchange as the full claim lifecycle
+  (REQUESTED, APPROVED, PICKED_UP, COMPLETED, plus DENIED and CANCELLED), which is
+  what the requirements call for (requirements.md:33). The current-scope document
+  models it as a request queue that stops at approve or deny, with no pickup or
+  completion step.
+- Role name. This artifact calls the requester Claimant, matching the
+  requirements. The current-scope document calls that role Recipient, and it has
+  no Admin role.
+- Numbering. The use case numbers do not match between the two documents, except
+  for the five account use cases. Match by goal, using the table below.
+
+### 8.1 Current-scope use case to full-plan use case
+
+| Current-scope UC | Full-plan UC (this document) | Notes on the difference |
+| --- | --- | --- |
+| UC-01 Register with an invite token | UC-01 Register with an invite token | Same. |
+| UC-02 Log in | UC-02 Log in | Same. |
+| UC-03 Log out | UC-03 Log out | Same. |
+| UC-04 Invite a new member | UC-04 Invite a new member | Same. Both carry the same open question about who may issue invites. |
+| UC-05 Manage member profile | UC-05 Manage member profile | Same. |
+| UC-06 Browse, search, and filter active listings | UC-09 Browse, search, and filter active listings | Same goal, different number. |
+| UC-07 View listing details | UC-10 View listing details | Same goal, different number. The full-plan version also shows photos, which are out of the current scope. |
+| UC-08 Submit a request for an item (Recipient) | UC-11 Claim produce from a listing (Claimant) | Same core goal. The current-scope version places the request in a queue and blocks a duplicate open request on the same listing; the full-plan version does neither. The role name also differs. |
+| UC-09 View the request queue for a listing (Poster) | No direct equivalent | The full plan has no standalone view-queue use case. The nearest coverage is UC-14 (approve or deny) and UC-20 (dashboard, which lists incoming requests). If the team keeps the queue model, the full plan would need a view-queue use case added. |
+| UC-10 Approve or deny the next request in the queue (Poster) | UC-14 Approve or deny a claim request (Poster) | Same goal. The current-scope version works through the queue in order; the full-plan version decides one request without queue-order framing. |
+| UC-11 Withdraw a queued request (Recipient) | UC-13 Cancel a claim (Claimant) | Same goal. The current-scope version only allows withdrawing a request that is still REQUESTED; the full-plan version allows cancelling from REQUESTED or APPROVED. The role name also differs. |
+| UC-12 Send and read messages in the exchange thread | UC-16 Coordinate pickup via the exchange message thread | Same goal, different number and name. |
+
+### 8.2 In the full plan but not in the current scope
+
+These full-plan use cases have no counterpart in the current-scope document,
+because that document cut them from its current slice. Keep them here; they are
+part of the complete plan and the requirements.
+
+- UC-06 Create a listing (the current scope uses seeded listings instead)
+- UC-07 Edit a listing
+- UC-08 Deactivate own listing
+- UC-12 Confirm pickup
+- UC-15 Complete an exchange
+- UC-17 View status notifications
+- UC-18 Leave a rating and review after completion
+- UC-19 View reviews for a completed exchange
+- UC-20 View my dashboard and activity overview
+- UC-21 Suspend a user
+- UC-22 Deactivate a listing as admin
+- UC-23 Generate basic reports
+- UC-24 View pickup reminders (stretch)
+
+### 8.3 Open decisions for the team
+
+These three differences are not settled yet. They do not change this artifact
+until the team decides. They are listed so that an 11th-hour backfill is a known,
+small set of choices rather than a fresh analysis.
+
+- Scope: commit to the full plan, or to the smaller current-scope slice? This
+  artifact keeps the full plan.
+- Model: is the core flow the full claim lifecycle (this artifact, and what the
+  requirements call for) or the request-queue model (the current-scope document)?
+  If the queue model is only the current iteration, the two can coexist as the
+  plan versus the current slice. If it is meant to replace the lifecycle, that
+  conflicts with requirements.md:33 and is worth raising with the team or the
+  instructor.
+- Role name: Claimant (this artifact, matching the requirements) or Recipient
+  (the current-scope document)?
