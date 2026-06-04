@@ -1179,17 +1179,3 @@ of choices rather than a fresh analysis.
 - Milestones: the current scope schedules all 12 of its stories as R1. This
   artifact spreads stories across R1, R2, and a stretch. If the team commits to
   the current-scope plan, the R1 and R2 split here would need a second look.
-
-### 7.4 Non-story technical deliverable
-
-The current-scope document carries a short "Non-story technical deliverable"
-section for the database schema, which is in scope but is a technical deliverable,
-not an actor goal, so it has no story. The same holds for the full plan. It is
-traced here so the two documents line up and reviewers can confirm nothing was
-dropped.
-
-| Commitment | Covered by (artifact) |
-| --- | --- |
-| Database schema as the single source of truth for listings, threads, users, reviews, and related data | Technical design document: ERD, data model, and database migrations |
-| Active listings used by browse, search, and the request queue | Seeded demo data; listing creation is a full-plan story (US-06) but is seeded in the current scope |
-| Reviews data stored in the schema | Reviews stored as data; leaving and viewing reviews are full-plan stories (US-19, US-20) |
