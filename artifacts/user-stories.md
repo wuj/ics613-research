@@ -30,6 +30,16 @@ functionality. Edge cases and permission rules are captured as scenarios inside
 the relevant story, not as separate stories, per the instructor Q&A
 (requirements.md:377-379; user-story-template.md:50-57).
 
+A note on the current-scope companion document: the team also maintains a
+narrower, current-scope version of these stories at
+`current-state/current-state-user-stories.md`. That document is a deliberately
+reduced slice (12 stories) that models the core exchange as a request queue and
+names the requester role Recipient. This full artifact is the complete plan and
+the requirements-faithful source of truth, and it holds the 25 to 30 stories the
+course requires. Section 7 maps the two documents story by story, by goal, so
+this artifact can be used for a quick manual backfill of the current-scope
+document if it is ever needed.
+
 ## 2. How the three documents align
 
 This section synthesizes the team charter, the requirements, and the use cases
@@ -1087,3 +1097,99 @@ yet "Ready" in the Definition of Ready sense (user-story-template.md:179-184)
 until those assumptions are confirmed. Each story will become one GitHub Issue
 with Priority, Type: story, Actor, and Milestone labels, then be added to the
 project board (user-story-template.md:146-168).
+
+## 7. Mapping to the current-scope user stories
+
+The team maintains a narrower, current-scope version of these stories at
+`current-state/current-state-user-stories.md`. That document is read-only; this
+artifact is the only one this mapping changes. The two are not parallel copies.
+They differ in four ways, so use this section, not the story numbers, to line
+them up:
+
+- Scope. This artifact is the full plan, US-01 through US-25, which is the 25 to
+  30 stories the course requires (requirements.md:149). The current-scope
+  document is a smaller slice with its own US-01 through US-12. It leaves out
+  listing creation, photos, editing, and deactivation, pickup and completion,
+  reviews, the dashboard, admin, notifications, and the stretch reminder on
+  purpose, and it uses seeded listings.
+- Model. This artifact models the exchange as the full claim lifecycle
+  (REQUESTED, APPROVED, PICKED_UP, COMPLETED, plus DENIED and CANCELLED), which is
+  what the requirements call for (requirements.md:33). The current-scope document
+  models it as a request queue that stops at approve or deny.
+- Role name. This artifact calls the requester Claimant, matching the
+  requirements, and includes an Admin role. The current-scope document calls that
+  role Recipient and has no Admin.
+- Numbering. The story numbers do not match between the two documents, except for
+  the five account stories. Match by goal, using the table below.
+
+### 7.1 Current-scope story to full-plan story
+
+| Current-scope US | Full-plan US (this document) | Notes on the difference |
+| --- | --- | --- |
+| US-01 Register with an invite token | US-01 Register with an invite token | Same. |
+| US-02 Log in | US-02 Log in | Same. |
+| US-03 Log out | US-03 Log out | Same. |
+| US-04 Invite a new member | US-04 Invite a new member | Same story. The full plan schedules it in R2; the current scope puts it in R1. Same open question about who may issue invites. |
+| US-05 View and update member profile | US-05 View and update member profile | Same story. Full plan R2, current scope R1. |
+| US-06 Browse, search, and filter active listings | US-10 Browse, search, and filter active listings | Same goal, different number. |
+| US-07 View listing details | US-11 View listing details | Same goal, different number. The full-plan version also shows photos, which are out of the current scope. |
+| US-08 Submit a request for an item (recipient) | US-12 Submit a claim for a quantity (claimant) | Same core goal. The current-scope version places the request in a queue and adds a duplicate-open-request scenario; the full-plan version does neither. The role name differs. |
+| US-09 View the request queue for a listing (poster) | No direct equivalent | The full plan has no standalone view-queue story. The nearest coverage is US-15 (approve or deny) and US-21 (dashboard, which lists incoming requests). If the team keeps the queue model, the full plan would need a view-queue story added. |
+| US-10 Approve or deny the next request in the queue (poster) | US-15 Approve or deny a claim request (poster) | Same goal. The current-scope version works through the queue in order; the full-plan version decides one request without queue-order framing. |
+| US-11 Withdraw a queued request (recipient) | US-13 Cancel a claim (claimant) | Same goal. The current-scope version only allows withdrawing a request that is still REQUESTED; the full-plan version allows cancelling from REQUESTED or APPROVED. The role name differs. |
+| US-12 Send and read messages in the exchange thread | US-17 Coordinate pickup via the exchange message thread | Same goal, different number. |
+
+### 7.2 In the full plan but not in the current scope
+
+These full-plan stories have no counterpart in the current-scope document,
+because that document cut them from its current slice. Keep them here; they are
+part of the complete plan, the requirements, and the 25 to 30 story count.
+
+- US-06 Create a listing (the current scope uses seeded listings instead)
+- US-07 Add and manage listing photos
+- US-08 Edit a listing
+- US-09 Deactivate own listing
+- US-14 Confirm pickup
+- US-16 Complete an exchange
+- US-18 View status notifications
+- US-19 Leave a rating and review after completion
+- US-20 View reviews for a completed exchange
+- US-21 View my dashboard and activity overview
+- US-22 Suspend a user
+- US-23 Deactivate a listing as admin
+- US-24 Generate basic reports
+- US-25 View pickup reminders (stretch)
+
+### 7.3 Open decisions for the team
+
+These differences are not settled yet. They do not change this artifact until the
+team decides. They are listed so that an 11th-hour backfill is a known, small set
+of choices rather than a fresh analysis.
+
+- Scope: commit to the full plan, or to the smaller current-scope slice? This
+  artifact keeps the full plan, because the course requires 25 to 30 stories.
+- Model: is the core flow the full claim lifecycle (this artifact, and what the
+  requirements call for) or the request-queue model (the current-scope document)?
+  If the queue model is only the current iteration, the two can coexist as the
+  plan versus the current slice. If it is meant to replace the lifecycle, that
+  conflicts with requirements.md:33 and is worth raising with the team or the
+  instructor.
+- Role name: Claimant (this artifact, matching the requirements) or Recipient
+  (the current-scope document)?
+- Milestones: the current scope schedules all 12 of its stories as R1. This
+  artifact spreads stories across R1, R2, and a stretch. If the team commits to
+  the current-scope plan, the R1 and R2 split here would need a second look.
+
+### 7.4 Non-story technical deliverable
+
+The current-scope document carries a short "Non-story technical deliverable"
+section for the database schema, which is in scope but is a technical deliverable,
+not an actor goal, so it has no story. The same holds for the full plan. It is
+traced here so the two documents line up and reviewers can confirm nothing was
+dropped.
+
+| Commitment | Covered by (artifact) |
+| --- | --- |
+| Database schema as the single source of truth for listings, threads, users, reviews, and related data | Technical design document: ERD, data model, and database migrations |
+| Active listings used by browse, search, and the request queue | Seeded demo data; listing creation is a full-plan story (US-06) but is seeded in the current scope |
+| Reviews data stored in the schema | Reviews stored as data; leaving and viewing reviews are full-plan stories (US-19, US-20) |
