@@ -152,6 +152,34 @@ As a claimant or poster after completion, I want to leave a short rating and rev
   - Edge cases are captured as scenarios within a story's acceptance criteria, not as separate user stories.
   - Permissions are also captured as acceptance criteria scenarios (for example, when an owner lists a tool, a non-owner cannot delist it).
 - Domain model
+  - Repository synthesis note, added after the original requirements text: The
+    original deliverable list names "Domain model" but does not define the
+    expected format in this section. The clearest course source is the Week 02a
+    Requirements Engineering lecture, which defines a domain model as a
+    conceptual representation of the key entities, attributes, and
+    relationships in the problem domain. The same lecture says the model
+    describes what exists in the real-world domain the system must support, not
+    how the software will be built.
+  - Based on Week02a_RequirementsEngineering.pdf, pages 14 to 16, the expected
+    artifact should be a UML-style domain class diagram. It should include:
+    domain entities, plain attribute names, named relationships, and
+    multiplicity/cardinality on relationships.
+  - The domain model should not be treated as the database schema or ERD.
+    Week02a, page 14, says the domain model is not a database schema, although
+    the two artifacts can be similar. This distinction is also supported later
+    in this requirements document, where the mid-semester presentation asks for
+    an overview of both the domain model and the ER diagram.
+  - Keep implementation details out of the domain model. Week02a, page 15,
+    says domain-model attributes should not include visibility modifiers or
+    types because those are design decisions. By the same reasoning, avoid SQL
+    types, primary keys, foreign keys, indexes, and implementation methods
+    unless a concept is truly part of the problem domain.
+  - Supporting repo evidence: requirements.md line 272 asks for both the domain
+    model and ER diagram in the mid-semester presentation; requirements.md line
+    335 says the domain model is not required for the review packet but is a
+    nice-to-include item; meeting-notes/2026-06-02-meeting-notes.md line 42
+    summarizes the domain model as a diagram of the key things in the problem
+    area and how they relate to each other.
 
 **B. Cross-Team Requirements Review Packet**
 
