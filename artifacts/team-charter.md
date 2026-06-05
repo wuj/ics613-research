@@ -7,7 +7,7 @@
 
 # **1\. Team Purpose**
 
-Team 4 is building an online local produce exchange web application. This produce exchange is intended to serve an invite-only community by helping them share extra produce and other food before it goes to waste. The basic idea is this: if one person has too many tomatoes and another person could use them, the app should make that exchange easy.
+Team 4 is building an online local produce exchange web application called "Surplus". This produce exchange is intended to serve an invite-only community by helping them share extra produce and other food before it goes to waste. The basic idea is this: if one person has too many tomatoes and another person could use them, the app should make that exchange easy.
 
 We are also using this project as an opportunity to practice our software engineering skills as a team via the software development lifecycle. That means we will gather requirements, design the system, build features, test our work, and deliver working software through regular milestones.
 
@@ -21,12 +21,13 @@ Local Produce Exchange is an invite-only web application where people in a trust
 
 *Add 3 to 5 measurable or concrete project goals.*
 
+* **Reproducible deployment:** make sure teammates on a clean machine can follow the deployment guide and get the app running in under 30 minutes, with seeded demo data that shows every major state.
+* **Maintain clear documentation:** produce and maintain thorough project documentation, including requirements, system designs, user stories, and meeting notes, to support future development and team communication.
+* **Deliver a working end-to-end demonstration:** effectively demonstrate a complete produce exchange portal by walking through the full poster and claimer flow across the states REQUESTED, APPROVED, PICKED_UP, and COMPLETED.
 * **Story completion:** finish 100 percent of must-have user stories and at least 80 percent of the full 25 to 30 story backlog by final submission, delivered across the R1 and R2 milestones.
 * **Business-rule correctness:** keep automated tests passing for each core rule: no approved claim can exceed a listing's remaining quantity, claim statuses must move only through allowed transitions, and a claim cannot be cancelled after pickup.
 * **Test coverage:** reach at least 70 percent automated test coverage on backend business logic, plus tests for every permission rule for members, admins, and guests, and for the full exchange flow from listing to completion.
-* **Reproducible deployment:** make sure teammates on a clean machine can follow the deployment guide and get the app running in under 30 minutes, with seeded demo data that shows every major state.
 * **Process discipline:** send 100 percent of changes through reviewed pull requests, allow zero direct commits to main, and update the project board at least weekly.
-* **Maintain clear documentation:** produce and maintain thorough project documentation, including requirements, system designs, user stories, and meeting notes, to support future development and team communication.
 
 ## **In Scope**
 
@@ -75,7 +76,7 @@ These roles describe who keeps an eye on each area. They are not silos. Everyone
 | Shea Stevens | Database Lead | Database administration: the PostgreSQL schema and ERD, migrations, and seeded demo data | Front end system design |
 | Matt Ong | Frontend Lead | React and TypeScript UI components, responsive layout, client-side validation, and connecting the UI to the API | Backup QA and UI tests |
 | Kim Cates | Team Lead and Scrum Master | Runs meetings, keeps the project board current, tracks milestones and deadlines, watches scope, makes sure deliverables ship on time, and coordinates presentations | Documentation and backup front end |
-| Jeff Wu | QA and DevOps Lead | The Docker environment for PostgreSQL, Make and a makefile for easy local builds, GitHub Actions for linting (Ruff, ESLint with typescript-eslint) on each PR, test strategy, and the deployment guide | TypeScript front end functionality and Python as needed |
+| Jeff Wu | QA and DevOps Lead | The Docker environment for PostgreSQL, npm scripts for easy cross-platform local builds, GitHub Actions for linting (Ruff, ESLint with typescript-eslint) on each PR, test strategy, and the deployment guide | TypeScript front end functionality and Python as needed |
 
 ## **Role Framework**
 
@@ -92,6 +93,7 @@ These roles describe who keeps an eye on each area. They are not silos. Everyone
 * **Talk early and honestly:** if something is confusing, blocked, broken, or bigger than expected, we say so early and help each other figure it out.
 * **Accountability:** given everyone's busy schedules, keeping deliverables on schedule helps the rest of the team stay on track, so we follow through on our commitments and say something early when a deadline is at risk.
 * **Flexibility:** things do come up, so when problems happen we work together as a team to fix them as they occur.
+* **Share knowledge:** if you figure something out or are skilled in a certain concept, help others reach a better understanding together.
 * **Make room for everyone:** every teammate should have a real voice in decisions, and we assume good intent.
 * **Build work we can demo:** we do not merge code we would be nervous to show. We test, review, and clean up before calling work done.
 * **Keep learning:** we are here to get better at React, Python, PostgreSQL, testing, and teamwork. Mistakes are useful when we learn from them.
@@ -115,9 +117,11 @@ We will have one weekly live meeting and use Discord for shorter updates during 
 
 *Describe expectations for participation, reliability, responsiveness, and workload sharing.*
 
+* **Keep commitments realistic:** we each take a fair share of work for each milestone, keep our GitHub issues current, and speak up early if there is a problem or something might slip.
+* **Get merge approval:** have at least one other teammate review your code before it is merged to main.
+* **Be responsive:** use the Discord server as a single point of contact so everyone stays on the same page as we work through requirements.
 * **Show up and stay in the loop:** attend the weekly meeting and post short Discord updates on the days we agree to. If you cannot make a meeting, say so ahead of time and read the notes afterward.
 * **Reply within a reasonable time:** answer Discord messages within 24 hours on weekdays. If a teammate is blocked by your answer, reply the same day when possible. Acknowledge issues assigned to you within 24 hours.
-* **Keep commitments realistic:** we each take a fair share of work for each milestone, keep our GitHub issues current, and speak up early if there is a problem or something might slip.
 * **Share the useful and less glamorous work:** everyone should get meaningful coding, testing, and documentation tasks. We will rotate chores like note-taking and cleanup.
 * **Bring real progress to meetings:** push work in progress before the weekly meeting so discussion and review are based on actual code, not memory.
 
@@ -128,7 +132,7 @@ We will have one weekly live meeting and use Discord for shorter updates during 
 * **Start with consensus:** most of our decisions should come from talking it through in a meeting or on Discord until the team agrees.
 * **Technical decisions:** architecture, libraries, API design, and database design are proposed in a GitHub issue or meeting. If the team cannot agree, the lead for that area makes the call and records the reason.
 * **Scope decisions:** adding or cutting a feature affects everyone, so the team has to agree. The Team Lead records major scope changes as change requests, updates the board, and revises this charter if needed.
-* **Scheduling decisions:** ownership and target dates are set in the weekly meeting and tracked on the board. The Team Lead resolves conflicts when needed.
+* **Scheduling decisions:** ownership and target dates are set in the weekly meeting and tracked on the board. Because of work schedules, the team usually meets in the evenings or on weekends. We review the milestone timeline regularly and reprioritize when a deadline is at risk. The Team Lead resolves conflicts when needed.
 * **Tie-breaker:** if a vote splits two to two, the Team Lead breaks the tie and records the decision and the reason. For a purely technical call, the Team Lead may defer to the lead for that area. Important decisions go into the meeting notes so we do not have to rely on memory.
 
 # **8\. Development Workflow**
@@ -147,6 +151,7 @@ We will have one weekly live meeting and use Discord for shorter updates during 
 
 * **Code quality:** use a linter and formatter on both stacks, such as Ruff and Black for Python and ESLint and Prettier for TypeScript. Keep functions small, names clear, and commented-out dead code out of main.
 * **Testing:** write automated unit tests for every core business rule: over-claim prevention, allowed status transitions, and no cancellation after pickup. Also test every permission rule. Hold the team's coverage goal of at least 70 percent on backend business logic. Write manual test cases for key flows. UI automation with Playwright is a stretch goal.
+* **Code coverage:** generate and review coverage reports at each milestone so we can track progress against the 70 percent goal.
 * **Documentation:** keep the README current with setup, run, test, and deploy steps. Document the API endpoints and data model. Capture decisions in meeting notes.
 * **Deployment readiness:** keep seeded demo data and a tested deployment guide so the app can be brought up cleanly from a fresh checkout.
 * **Continuous integration:** a GitHub Actions workflow runs our linters on every pull request, Ruff for the Python code and ESLint for the TypeScript code. These checks must pass before a pull request can merge, which protects main alongside reviews and branch protection.
@@ -158,9 +163,9 @@ We will have one weekly live meeting and use Discord for shorter updates during 
 * **Team and process:** team charter; GitHub repository with README; protected main branch; pinned Discord repo link; project board, issues, and milestones; meeting notes and decision log; retrospective and defect-triage notes.
 * **Requirements:** high-level use cases; 25 to 30 user stories with acceptance criteria; domain model; cross-team requirements review packet and report.
 * **Design:** technical design document with an architecture diagram, components, ERD, data model, key API endpoints, technology stack, risks, and tradeoffs.
-* **Code and quality:** source code, automated test suite, manual test cases, QA packet, QA summary, and GitHub Actions CI workflows.
+* **Code and quality:** source code, automated test suite covering business rules and permission checks, manual test cases tied to user stories with edge and negative paths, QA packet, QA summary, and GitHub Actions CI workflows.
 * **Documentation:** project documentation that details how the system is designed, its features, database schemas, and so on, for easy management and future development.
-* **Delivery and release readiness:** seeded demo data, validated deployment guide, release-readiness document with implemented features and known limitations, and presentation decks for inception, R1, R2, and final.
+* **Delivery and release readiness:** seeded demo data, Dockerfile and docker-compose configuration, environment variable documentation, a validated deployment guide, a release-readiness document with implemented features and known limitations, and presentation decks for inception, R1, R2, and final.
 * **Individual accountability:** peer evaluations and individual reflections.
 
 Drafts live in Google Drive. Final versions are committed to or linked from the repo.
@@ -173,7 +178,7 @@ Drafts live in Google Drive. Final versions are committed to or linked from the 
 * **Bring in the team when needed:** if a direct conversation does not fix the issue, raise it in the weekly meeting so the team can agree on next steps.
 * **Handle silence or missed work quickly:** if a member goes quiet or misses a commitment, the team reaches out on Discord. If there is no response within two days, the team reassigns the at-risk work to keep the project moving and records it in the meeting log.
 * **Escalate repeated or serious issues:** if a problem keeps coming back or cannot be resolved inside the team, we raise it with the instructor. Contributions are visible through GitHub activity and reflected honestly in peer evaluations.
-* **Stay problem-focused:** conflict is something to solve together, not a reason to blame someone.
+* **Stay problem-focused:** conflict is something to solve together, not a reason to blame someone. Feedback is about the work, not the person.
 
 # **12\. Risks and Mitigation**
 
@@ -181,6 +186,7 @@ Drafts live in Google Drive. Final versions are committed to or linked from the 
 
 * **Scope gets too big, especially stretch features.** Photos and notifications are already ambitious, and email or SMS plus pickup reminders add extra moving parts. Mitigation: build the core exchange flow first, keep stretch features tagged and low priority, and defer or cut them through the change-request process if we fall behind.
 * **The stack has a learning curve.** Some members may be new to React, TypeScript, FastAPI, or PostgreSQL. Mitigation: build a thin end-to-end slice early by R1, pair on hard parts, and use lecture material and office hours.
+* **The frontend and backend do not integrate cleanly.** Mitigation: agree on the API contracts early and document them in the design document before implementation begins.
 * **Workload becomes uneven or someone becomes unavailable.** Mitigation: use secondary owners for every area, distribute issues fairly each milestone, and follow the escalation steps in Section 11.
 * **Core business-rule bugs sneak in.** The highest-risk rules are over-claim prevention, status transitions, and no cancellation after pickup. Mitigation: write automated tests for these rules early, cover edge and negative paths, and require review on any pull request that touches them.
 * **Setup drifts across machines.** Mitigation: everyone sets up their environment in week 1, we keep setup steps and seeded demo data in the README, and CI catches breakages early.
@@ -196,10 +202,10 @@ Drafts live in Google Drive. Final versions are committed to or linked from the 
 | Team Charter | June 5, 2026 | TBD | Charter due June 5 |
 | Inception Presentation | June 8, 2026 | TBD | Presented June 9; each member about 10 minutes plus Q and A |
 | Core Requirements Artifacts | June 8, 2026 | TBD | Core requirements and requirements packet |
-| Cross-Team Requirements Review Packet | June 15, 2026 | TBD | Presented June 16 |
+| Cross-Team Requirements Review Packet | June 15, 2026 | Shea | Presented June 16 |
 | Technical Design Document | July 1, 2026 | TBD | Architecture and components, ERD, API endpoints, tech stack, risks |
 | R1 Demo + Presentation | July 6, 2026 | TBD | Presented July 7; retrospective and defect triage July 9 |
-| Manual Test Cases / QA Packet | July 14, 2026 | TBD | Positive, negative, edge, permission, and workflow tests |
+| Manual Test Cases / QA Packet | July 14, 2026 | Shea | Positive, negative, edge, permission, and workflow tests |
 | R2 Demo + Presentation | July 27, 2026 | TBD | Presented July 28 |
 | Deployment Guide + Release Readiness | August 6, 2026 | TBD | Deployment steps, seeded data, known limitations |
 | Final Submission + Final Presentation | August 11, 2026 | TBD | Final demos August 11 to 13; peer evaluation and reflection August 13 |
@@ -215,7 +221,7 @@ We agree to show up, communicate clearly, do our share, and help each other fini
 | Name | Signature / Acknowledgment | Date |
 | ----- | ----- | ----- |
 | Kennan Kaneshiro | [Acknowledge] | [Date] |
-| Shea Stevens | [Acknowledge] | [Date] |
+| Shea Stevens | *Shea Stevens* | [Date] |
 | Matt Ong | [Acknowledge] | [Date] |
 | Kim Cates | [Acknowledge] | [Date] |
 | Jeff Wu | [Acknowledge] | [Date] |
