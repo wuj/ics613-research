@@ -195,7 +195,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The requested quantity is more than the remaining quantity: the system rejects the approval.  
   - A Member who does not own the listing tries to handle the request: the system denies access.  
   - The request is not in REQUESTED status: the system rejects the action.  
-- Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. DENIED is terminal.  
+- Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. A denial is final: the request cannot change status again.  
 - Related user stories: US-10.
 
 #### Use Case UC-11: Withdraw a queued request
@@ -213,7 +213,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The request is already APPROVED or DENIED: the system rejects the withdrawal.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
-- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, and the Poster has been notified. The remaining quantity is unchanged.  
+- Postconditions: The request has status CANCELLED, which is final, it is no longer in the queue, and the Poster has been notified. The remaining quantity is unchanged.  
 - Related user stories: US-11.
 
 ### 3.4 Coordination

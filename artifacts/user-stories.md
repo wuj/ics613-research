@@ -369,7 +369,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- DENIED is terminal.  
+- A denial is final: the request cannot change status again.  
 - The poster handles requests in the order they are received.  
 - Approve and deny are two outcomes of one decision, so they are scenarios in this one story, not separate stories.
 
