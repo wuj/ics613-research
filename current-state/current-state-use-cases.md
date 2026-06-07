@@ -2,7 +2,7 @@
 
 ## 1\. Introduction
 
-This document is the high-level use cases for the Local Produce Exchange. It is based on the in-scope items from the Team Charter and project requirements. Each use case follows the recommended format and stays at a high level. Deeper detail is left to the user stories and their acceptance criteria, which are a different deliverable.
+This document is the high-level use cases for the Local Produce Exchange. It is based on the in-scope items from the Team Charter and project requirements. Each use case stays at a high level. Deeper detail is left to the user stories and their acceptance criteria, which are a different deliverable.
 
 The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
@@ -78,7 +78,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Primary actor: Member  
 - Supporting actors: System (creates the invite token)  
 - Goal: Create and share an invite token so a new person can register.  
-- Preconditions: The Member is logged in and active. (Assumption: a Member may issue invite tokens. See Section 4.)  
+- Preconditions: The Member is logged in and active. (Assumption: a Member may issue invite tokens.)  
 - Trigger: The Member chooses to invite a new person.  
 - Main success flow:  
   1. The Member chooses to create an invite.  
@@ -184,7 +184,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Primary actor: Poster  
 - Supporting actors: Recipient (the requester); System (checks quantity, updates status, notifies the Recipient)  
 - Goal: Handle a pending request on the Poster's listing by approving or denying it, keeping the queue order and preventing conflicts.  
-- Preconditions: The Poster owns the listing. At least one request has status REQUESTED. (Assumption: the Poster handles requests in the order received. See Section 4.)  
+- Preconditions: The Poster owns the listing. At least one request has status REQUESTED. (Assumption: the Poster handles requests in the order received.)  
 - Trigger: The Poster chooses to approve or deny a pending request.  
 - Main success flow:  
   1. The Poster opens the next pending request in the queue.  
@@ -256,7 +256,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The Poster also adds one or more optional photos: the system stores the photos with the listing.  
   - The member is suspended: the system denies the action and creates no listing.  
 - Postconditions: A new active listing exists with the entered details.  
-- Related user stories: US-13, US-25 (photos).
+- Related user stories: US-13, US-25.
 
 #### Use Case UC-14: Edit a listing
 
@@ -276,7 +276,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member tries to edit a listing they do not own: the system denies the action.  
   - The member is suspended: the system denies the action and saves no change.  
 - Postconditions: The listing reflects the saved changes.  
-- Related user stories: US-14, US-25 (photos).
+- Related user stories: US-14, US-25.
 
 #### Use Case UC-15: Deactivate own listing
 
@@ -301,7 +301,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Primary actor: Recipient  
 - Supporting actors: Poster (the other party); System (updates status, notifies the Poster)  
 - Goal: Confirm that the Recipient has picked up the item so the exchange can move toward completion.  
-- Preconditions: The request has status APPROVED and the Recipient owns it. (Assumption: the Recipient confirms pickup. See Section 4.)  
+- Preconditions: The request has status APPROVED and the Recipient owns it. (Assumption: the Recipient confirms pickup.)  
 - Trigger: The Recipient chooses to confirm pickup.  
 - Main success flow:  
   - The Recipient opens their approved request.  
@@ -319,7 +319,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Primary actor: Poster  
 - Supporting actors: Recipient (the other party); System (updates status, notifies the Recipient)  
 - Goal: Mark a picked-up exchange as completed so both parties can review it.  
-- Preconditions: The request has status PICKED\_UP and the Poster owns the listing. (Assumption: the Poster marks the exchange complete. See Section 4.)  
+- Preconditions: The request has status PICKED\_UP and the Poster owns the listing. (Assumption: the Poster marks the exchange complete.)  
 - Trigger: The Poster chooses to mark the exchange complete.  
 - Main success flow:  
   1. The Poster opens the picked-up exchange.  
