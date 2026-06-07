@@ -4,16 +4,17 @@
 
 This document is the high-level use cases for the Local Produce Exchange. It is based on the in-scope items from the Team Charter and project requirements. Each use case follows the recommended format and stays at a high level. Deeper detail is left to the user stories and their acceptance criteria, which are a different deliverable.
 
-The roles used here are Guest, Member, Poster, and Recipient.
+The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
 ## 2\. Actors and Roles
 
-These are the roles the current scope defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another.
+These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another.
 
 * Guest: a person who holds an invite token but has not registered yet. A Guest can only register.  
-* Member: a registered, active user. A Member can browse, search, and filter listings, manage a profile, submit requests, and send messages.  
-* Poster: the Member who owns a listing. A Poster handles that listing's request queue and messages the recipient. In this scope slice, active listings are provided through seeded data; creating listings is out of the current scope.  
-* Recipient: the Member who submits a request for an item from a listing and, if approved, receives it. The poster reaches the recipient through the message thread.
+* Member: a registered, active user. A Member can browse, search, and filter listings, manage a profile, post listings, submit requests, send messages, leave reviews, and view a personal dashboard.  
+* Poster: the Member who owns a listing. A Poster creates and manages listings, handles each listing's request queue, messages the recipient, and marks a picked-up exchange complete.  
+* Recipient: the Member who submits a request for an item from a listing and, if approved, picks it up and confirms pickup. The poster reaches the recipient through the message thread.  
+* Admin: a privileged user who can suspend users, deactivate listings without deleting audit history, and generate basic reports.
 
 ## 3\. Use Cases
 
@@ -200,22 +201,23 @@ The use cases below are grouped by topic.
 - Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. DENIED is terminal.  
 - Related user stories: TBD.
 
-#### Use Case UC-11: Withdraw a queued request
+#### Use Case UC-11: Withdraw a request
 
 - Primary actor: Recipient  
 - Supporting actors: Poster (the other party); System (updates status, removes the request from the queue, notifies the Poster)  
-- Goal: Withdraw a pending request the Recipient no longer needs, removing it from the queue.  
-- Preconditions: The request has status REQUESTED and the Recipient owns it.  
+- Goal: Withdraw a pending or approved request the Recipient no longer needs, before pickup happens.  
+- Preconditions: The request has status REQUESTED or APPROVED and the Recipient owns it.  
 - Trigger: The Recipient chooses to withdraw their request.  
 - Main success flow:  
-  1. The Recipient opens their pending request.  
+  1. The Recipient opens their request.  
   2. The Recipient chooses to withdraw it.  
-  3. The system sets the request status to CANCELLED and removes it from the queue.  
+  3. The system sets the request status to CANCELLED and, if the request was still pending, removes it from the queue.  
   4. The system notifies the Poster.  
 - Alternate and exception flows:  
-  - The request is already APPROVED or DENIED: the system rejects the withdrawal, because only a pending request can be withdrawn in this scope.  
+  - The request is already PICKED_UP or COMPLETED: the system rejects the withdrawal, because cancellation after pickup is not allowed.  
+  - The request is already DENIED: the system rejects the withdrawal, because a denied request is closed.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
-- Postconditions: The request has status CANCELLED, which is terminal, it is removed from the queue, and the Poster has been notified.  
+- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, and the Poster has been notified.  
 - Related user stories: TBD.
 
 ### 3.4 Coordination
@@ -238,11 +240,259 @@ The use cases below are grouped by topic.
 - Postconditions: The message is saved to the exchange thread and visible to both parties.  
 - Related user stories: TBD.
 
+### 3.5 Listings
+
+#### Use Case UC-13: Create a listing
+
+- Primary actor: Poster
+- Supporting actors: System (saves the listing)
+- Goal: Post a new listing with the required details so other members can request the item.
+- Preconditions: The Poster is a registered, active member.
+- Trigger: The Poster chooses to create a listing.
+- Main success flow:
+  1. The Poster chooses to create a listing.
+  2. The Poster enters the description, category, quantity available, dietary and allergen tags, and a pickup window.
+  3. The system validates the required details.
+  4. The system saves the listing and makes it active.
+- Alternate and exception flows:
+  - A required detail is missing or invalid: the system rejects the listing and shows a validation error.
+  - The Poster also adds one or more optional photos: the system stores the photos with the listing.
+  - The member is suspended: the system denies the action and creates no listing.
+- Postconditions: A new active listing exists with the entered details.
+- Related user stories: TBD.
+
+#### Use Case UC-14: Edit a listing
+
+- Primary actor: Poster
+- Supporting actors: System (saves the changes)
+- Goal: Update the details of an existing listing, including its photos.
+- Preconditions: The Poster owns the listing.
+- Trigger: The Poster chooses to edit one of their listings.
+- Main success flow:
+  1. The Poster opens one of their listings to edit.
+  2. The Poster changes the details.
+  3. The system validates the changes.
+  4. The system saves the updated listing.
+- Alternate and exception flows:
+  - A changed detail is missing or invalid: the system rejects the change and shows a validation error.
+  - The Poster adds, replaces, or removes optional photos: the system updates the listing's photos.
+  - A Member tries to edit a listing they do not own: the system denies the action.
+  - The member is suspended: the system denies the action and saves no change.
+- Postconditions: The listing reflects the saved changes.
+- Related user stories: TBD.
+
+#### Use Case UC-15: Deactivate own listing
+
+- Primary actor: Poster
+- Supporting actors: System (hides the listing)
+- Goal: Take a listing out of browsing so no new requests can be made on it.
+- Preconditions: The Poster owns the listing and the listing is active.
+- Trigger: The Poster chooses to deactivate one of their listings.
+- Main success flow:
+  1. The Poster opens one of their active listings.
+  2. The Poster chooses to deactivate it.
+  3. The system marks the listing inactive and hides it from browsing.
+- Alternate and exception flows:
+  - A Member tries to deactivate a listing they do not own: the system denies the action.
+- Postconditions: The listing is inactive and no longer appears in browsing.
+- Related user stories: TBD.
+
+### 3.6 Pickup and completion
+
+#### Use Case UC-16: Confirm pickup
+
+- Primary actor: Recipient
+- Supporting actors: Poster (the other party); System (updates status, notifies the Poster)
+- Goal: Confirm that the Recipient has picked up the item so the exchange can move toward completion.
+- Preconditions: The request has status APPROVED and the Recipient owns it. (Assumption: the Recipient confirms pickup. See Section 4.)
+- Trigger: The Recipient chooses to confirm pickup.
+- Main success flow:
+  1. The Recipient opens their approved request.
+  2. The Recipient chooses to confirm pickup.
+  3. The system changes the request status from APPROVED to PICKED_UP.
+  4. The system notifies the Poster.
+- Alternate and exception flows:
+  - The request is not in APPROVED status: the system rejects the action and changes nothing.
+  - A Member who is not the requester tries to confirm pickup: the system denies the action.
+- Postconditions: The request has status PICKED_UP and the Poster has been notified.
+- Related user stories: TBD.
+
+#### Use Case UC-17: Complete an exchange
+
+- Primary actor: Poster
+- Supporting actors: Recipient (the other party); System (updates status, notifies the Recipient)
+- Goal: Mark a picked-up exchange as completed so both parties can review it.
+- Preconditions: The request has status PICKED_UP and the Poster owns the listing. (Assumption: the Poster marks the exchange complete. See Section 4.)
+- Trigger: The Poster chooses to mark the exchange complete.
+- Main success flow:
+  1. The Poster opens the picked-up exchange.
+  2. The Poster chooses to mark it complete.
+  3. The system changes the request status from PICKED_UP to COMPLETED.
+  4. The system notifies the Recipient.
+- Alternate and exception flows:
+  - The request is not in PICKED_UP status: the system rejects the action.
+  - A Member who does not own the listing tries to complete the exchange: the system denies the action.
+- Postconditions: The request has status COMPLETED and the Recipient has been notified.
+- Related user stories: TBD.
+
+### 3.7 Reviews
+
+#### Use Case UC-18: Leave a rating and review after completion
+
+- Primary actor: Member (acting as the reviewer)
+- Supporting actors: System (saves the review and makes it visible to the reviewed party)
+- Goal: Leave a short rating and review of the other party after an exchange is completed, so the community can build trust.
+- Preconditions: The exchange has status COMPLETED. The Member is the Poster or the Recipient for that exchange and has not already reviewed the other party.
+- Trigger: The Member chooses to leave a review for the completed exchange.
+- Main success flow:
+  1. The Member opens the completed exchange.
+  2. The Member enters a rating and a short review of the other party.
+  3. The system saves the review and links it to the completed exchange.
+  4. The system makes the saved review visible to the reviewed party.
+- Alternate and exception flows:
+  - The exchange is not COMPLETED: the system rejects the review and saves nothing.
+  - A Member who is not a participant tries to review: the system denies access.
+  - The Member has already reviewed the other party for this exchange: the system rejects the duplicate review.
+- Postconditions: The review is saved, linked to the completed exchange, and visible to the reviewed party.
+- Related user stories: TBD.
+
+#### Use Case UC-19: View reviews for a completed exchange
+
+- Primary actor: Member
+- Supporting actors: System (returns the reviews)
+- Goal: View the reviews left for a completed exchange, including a review left about the viewing member.
+- Preconditions: The exchange has status COMPLETED. The Member is the Poster or the Recipient for that exchange.
+- Trigger: The Member opens the reviews for a completed exchange.
+- Main success flow:
+  1. The Member opens a completed exchange.
+  2. The system shows the reviews linked to that exchange, including any review left about the viewing member.
+- Alternate and exception flows:
+  - No review has been left yet: the system shows that there are no reviews yet.
+  - A Member who is not a participant tries to view the reviews: the system denies access.
+- Postconditions: The Member has seen the reviews for the completed exchange.
+- Related user stories: TBD.
+
+### 3.8 Notifications and dashboard
+
+#### Use Case UC-20: View status notifications
+
+- Primary actor: Member
+- Supporting actors: System (returns the notifications)
+- Goal: Open and read in-app notifications about exchange status changes.
+- Preconditions: The Member is logged in.
+- Trigger: The Member opens their notifications.
+- Main success flow:
+  1. The Member opens their notifications.
+  2. The system shows the Member's notifications, newest first.
+  3. The Member reads a notification and can open the related exchange.
+- Alternate and exception flows:
+  - There are no notifications: the system shows an empty list.
+- Postconditions: The Member has seen their current notifications.
+- Related user stories: TBD.
+
+Note: This use case is only the member-initiated viewing of notifications. The generation of each notification stays as a step or postcondition inside the use case that caused it (UC-08, UC-10, UC-11, UC-16, and UC-17). The system pushing a notification is not a use case of its own.
+
+#### Use Case UC-21: View my dashboard and activity overview
+
+- Primary actor: Member
+- Supporting actors: System (gathers the member's activity)
+- Goal: See a single overview of the Member's own activity: active listings, incoming requests, outgoing requests, and exchange history.
+- Preconditions: The Member is logged in.
+- Trigger: The Member opens their dashboard.
+- Main success flow:
+  1. The Member opens their dashboard.
+  2. The system gathers the Member's active listings, incoming requests, outgoing requests, and exchange history.
+  3. The system shows these grouped by status, with each status-based action shown as an entry point to its own use case.
+- Alternate and exception flows:
+  - The Member has no activity yet: the system shows empty groups.
+- Postconditions: The Member has seen their current activity overview.
+- Related user stories: TBD.
+
+Note: This use case is a single viewing goal. The status-based actions on the dashboard (approve or deny a request, withdraw a request, deactivate a listing, confirm pickup, complete an exchange) are surfaced as entry points to their own use cases (UC-10, UC-11, UC-15, UC-16, and UC-17). They are not performed here. This keeps the dashboard view separate from the actions, which the project requirements describe as a profile view plus a dashboard for managing actions by status.
+
+### 3.9 Admin
+
+#### Use Case UC-22: Suspend a user
+
+- Primary actor: Admin
+- Supporting actors: System (updates the account)
+- Goal: Suspend a member account so it can no longer log in or take member actions.
+- Preconditions: The Admin is logged in with admin rights. The target account exists.
+- Trigger: The Admin chooses to suspend a user.
+- Main success flow:
+  1. The Admin opens the target user account.
+  2. The Admin chooses to suspend it.
+  3. The system marks the account suspended.
+- Alternate and exception flows:
+  - A non-admin user tries to suspend a user: the system denies the action.
+- Postconditions: The account is suspended and cannot log in or take member actions.
+- Related user stories: TBD.
+
+#### Use Case UC-23: Deactivate a listing as admin
+
+- Primary actor: Admin
+- Supporting actors: System (hides the listing, keeps audit history)
+- Goal: Hide a listing from browsing without deleting its audit history.
+- Preconditions: The Admin is logged in with admin rights. The listing exists.
+- Trigger: The Admin chooses to deactivate a listing.
+- Main success flow:
+  1. The Admin opens the target listing.
+  2. The Admin chooses to deactivate it.
+  3. The system hides the listing from browsing and keeps its audit history.
+- Alternate and exception flows:
+  - A non-admin user tries to deactivate a listing as admin: the system denies the action.
+- Postconditions: The listing is hidden from browsing and its audit history is kept.
+- Related user stories: TBD.
+
+#### Use Case UC-24: Generate basic reports
+
+- Primary actor: Admin
+- Supporting actors: System (computes and returns the report)
+- Goal: Generate a basic report about system activity.
+- Preconditions: The Admin is logged in with admin rights.
+- Trigger: The Admin chooses to generate a report.
+- Main success flow:
+  1. The Admin chooses a report to generate.
+  2. The system computes the report.
+  3. The system shows the report to the Admin.
+- Alternate and exception flows:
+  - A non-admin user tries to generate a report: the system denies the action.
+- Postconditions: The Admin has seen the generated report.
+- Related user stories: TBD.
+
+Note: To keep this use case verifiable, assume at least one concrete report type: an active-listing count and a completed-exchange count. The exact set of report types is an open question. See Section 4.
+
+### 3.10 Stretch use cases
+
+The next use case is a stretch goal from the team charter. It is included only if time allows and is clearly labeled as stretch.
+
+#### Use Case UC-25: View pickup reminders (stretch)
+
+- Primary actor: Member
+- Supporting actors: System (generates and returns reminders)
+- Goal: View reminders that a listing's pickup window is getting close.
+- Preconditions: The Member is logged in and is a party to an exchange with an upcoming pickup window.
+- Trigger: The Member opens their reminders.
+- Main success flow:
+  1. The Member opens their reminders.
+  2. The system shows reminders for exchanges whose pickup window is getting close.
+- Alternate and exception flows:
+  - There are no upcoming pickups: the system shows an empty list.
+- Postconditions: The Member has seen their current pickup reminders.
+- Related user stories: TBD.
+
+Note: This is a stretch use case. The generation of each reminder stays a system step. The member-initiated goal is viewing the reminders, not receiving them.
+
 ## 4\. Assumptions and open questions
 
 The team has not yet approved the items below. Each must be reviewed and either confirmed or changed before the requirements are locked. They follow the course guidance to record open questions and assumptions for the review packet.
 
 | ID | Type | Item | Affected use cases | Status |
 | :---- | :---- | :---- | :---- | :---- |
-|  |  |  |  |  |
+| A-01 | Assumption | Any active Member may issue invite tokens. The requirements call for invite-only registration but do not say who issues the tokens. | UC-01, UC-04 | Proposed |
+| A-02 | Assumption | The Poster handles queued requests in the order they were received. | UC-09, UC-10 | Proposed |
+| A-03 | Assumption | The Recipient is the party who confirms pickup (APPROVED to PICKED_UP). | UC-16 | Proposed |
+| A-04 | Assumption | The Poster is the party who marks the exchange complete (PICKED_UP to COMPLETED). | UC-17 | Proposed |
+| Q-01 | Open question | Which basic report types the Admin can generate. Assumed at least an active-listing count and a completed-exchange count. | UC-24 | Open |
+| Q-02 | Open question | The project requirements call the requesting role the claimant. This document calls it the Recipient. The team should pick one name. | UC-08, UC-11, UC-12, UC-16, UC-18, UC-19 | Open |
 
