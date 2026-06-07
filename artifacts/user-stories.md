@@ -323,7 +323,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - **Actor:** poster  
 - **Milestone:** Current scope (R1)
 
-**Story:** As a poster, I want to approve or deny a pending request on my listing so that I control who receives my items without conflicts.
+**Story:** As a poster, I want to approve or deny a pending request on my listing so that I control who receives my items, in order, without conflicts.
 
 **Acceptance criteria**
 
