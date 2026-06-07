@@ -4,7 +4,7 @@
 
 This document holds the user stories for the Local Produce Exchange. It is the companion to the team's use cases, the Team Charter, and project requirements. Each story names a user, the goal that user wants, and the benefit they get, followed by acceptance criteria. 
 
-Every story has a "Source use case(s)" so each one is traceable back to the current-scope use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel.
+Every story has a "Source use case(s)" so each one is traceable back to the current-scope use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel. There are 25 stories, US-01 through US-25, which lands inside the 25 to 30 range the course requires. Story numbers line up with use case numbers: US-01 through US-24 map one to one to UC-01 through UC-24, and US-25 covers the optional listing photos inside UC-13 and UC-14.
 
 ## 2\. The user stories
 
@@ -83,7 +83,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 **Notes / open questions / assumptions**
 
-- Suspending an account is an admin feature held back from this slice, but the suspended state is still checked at login.
+- Suspending an account is an admin feature (US-22, scheduled for R2), but the suspended state is still checked at login.
 
 #### US-03: Log out
 
@@ -215,7 +215,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 **Notes / open questions / assumptions**
 
-- Active listings are seeded for this slice; creating listings is out of the current scope.  
+- Listings are seeded for R1; creating listings is covered by US-13 in R2.  
 - Confirm the exact filter set. At minimum: category and dietary and allergen tags.
 
 #### US-07: View listing details
@@ -463,6 +463,462 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 - One thread links a poster and a recipient for a request.
 
+### 2.5 Listings
+
+#### US-13: Create a listing
+
+- **Source use case:** UC-13 (Create a listing)  
+- **Priority:** high  
+- **Actor:** poster  
+- **Milestone:** Full features (R2)
+
+**Story:** As a poster, I want to post a new listing with the required details so that other members can find and request the item.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the poster is a registered, active member  
+- When the poster enters a description, category, quantity available, dietary and allergen tags, and a pickup window, and saves  
+- Then the system validates the required details  
+- And saves the listing and makes it active
+
+*Scenario 2 \- edge / error path (missing detail)*
+
+- Given the poster is creating a listing  
+- And a required detail is missing or invalid  
+- When the poster saves the listing  
+- Then the system rejects the listing  
+- And shows a validation error
+
+*Scenario 3 \- permission rule (suspended member)*
+
+- Given the poster's account is suspended  
+- When the poster attempts to create a listing  
+- Then the system denies the action  
+- And no listing is created
+
+**Notes / open questions / assumptions**
+
+- Optional photo uploads during create are covered by US-25.  
+- The listing's remaining quantity starts equal to the quantity available.
+
+#### US-14: Edit a listing
+
+- **Source use case:** UC-14 (Edit a listing)  
+- **Priority:** medium  
+- **Actor:** poster  
+- **Milestone:** Full features (R2)
+
+**Story:** As a poster, I want to update the details of one of my listings so that the information stays accurate.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the poster owns the listing  
+- When the poster changes the details and saves  
+- Then the system validates the changes  
+- And saves the updated listing
+
+*Scenario 2 \- edge / error path (bad detail)*
+
+- Given the poster owns the listing  
+- And a changed detail is missing or invalid  
+- When the poster saves the change  
+- Then the system rejects the change  
+- And shows a validation error
+
+*Scenario 3 \- permission rule (not the owner)*
+
+- Given the listing belongs to another member  
+- When the member attempts to edit it  
+- Then the system denies the action  
+- And nothing changes
+
+*Scenario 4 \- permission rule (suspended member)*
+
+- Given the poster's account is suspended  
+- When the poster attempts to edit the listing  
+- Then the system denies the action  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- Adding, replacing, or removing photos during edit is covered by US-25.
+
+#### US-15: Deactivate own listing
+
+- **Source use case:** UC-15 (Deactivate own listing)  
+- **Priority:** medium  
+- **Actor:** poster  
+- **Milestone:** Full features (R2)
+
+**Story:** As a poster, I want to deactivate one of my listings so that no new requests can be made on it.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the poster owns an active listing  
+- When the poster chooses to deactivate it  
+- Then the system marks the listing inactive  
+- And hides it from browsing
+
+*Scenario 2 \- permission rule (not the owner)*
+
+- Given the listing belongs to another member  
+- When the member attempts to deactivate it  
+- Then the system denies the action  
+- And the listing stays active
+
+**Notes / open questions / assumptions**
+
+- Confirm what happens to requests already in progress on a listing that is deactivated. Assumption: existing requests continue through their lifecycle; only new requests are blocked.
+
+### 2.6 Pickup and completion
+
+#### US-16: Confirm pickup
+
+- **Source use case:** UC-16 (Confirm pickup)  
+- **Priority:** high  
+- **Actor:** recipient  
+- **Milestone:** Full features (R2)
+
+**Story:** As a recipient, I want to confirm that I picked up the item so that the exchange can move toward completion.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the recipient owns a request with status APPROVED  
+- When the recipient confirms pickup  
+- Then the system changes the request status from APPROVED to PICKED\_UP  
+- And the poster is notified
+
+*Scenario 2 \- workflow rule (wrong status)*
+
+- Given the request is not in APPROVED status  
+- When the recipient attempts to confirm pickup  
+- Then the system rejects the action  
+- And nothing changes
+
+*Scenario 3 \- permission rule (not the requester)*
+
+- Given a member who is not the requester for the request  
+- When that member attempts to confirm pickup  
+- Then the system denies the action  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- ASSUMPTION: the recipient owns the move to PICKED\_UP. Confirm this with the team.
+
+#### US-17: Complete an exchange
+
+- **Source use case:** UC-17 (Complete an exchange)  
+- **Priority:** high  
+- **Actor:** poster  
+- **Milestone:** Full features (R2)
+
+**Story:** As a poster, I want to mark a picked-up exchange as completed so that both parties can leave a review.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the poster owns the listing  
+- And the request has status PICKED\_UP  
+- When the poster marks the exchange complete  
+- Then the system changes the request status from PICKED\_UP to COMPLETED  
+- And the recipient is notified
+
+*Scenario 2 \- workflow rule (wrong status)*
+
+- Given the request is not in PICKED\_UP status  
+- When the poster attempts to mark the exchange complete  
+- Then the system rejects the action  
+- And nothing changes
+
+*Scenario 3 \- permission rule (not the listing owner)*
+
+- Given a member who does not own the listing  
+- When that member attempts to complete the exchange  
+- Then the system denies the action  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- ASSUMPTION: the poster owns the move to COMPLETED. Confirm this with the team.
+
+### 2.7 Reviews
+
+#### US-18: Leave a rating and review after completion
+
+- **Source use case:** UC-18 (Leave a rating and review after completion)  
+- **Priority:** medium  
+- **Actor:** member  
+- **Milestone:** Full features (R2)
+
+**Story:** As a member who took part in a completed exchange, I want to leave a short rating and review of the other party so that the community can build trust.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given an exchange has status COMPLETED  
+- And the member is the poster or the recipient for that exchange  
+- And the member has not already reviewed the other party  
+- When the member submits a rating and a short review  
+- Then the system saves the review  
+- And links it to the completed exchange  
+- And makes it visible to the reviewed party
+
+*Scenario 2 \- workflow rule (not completed)*
+
+- Given an exchange has status REQUESTED, APPROVED, PICKED\_UP, DENIED, or CANCELLED  
+- When the member attempts to submit a review  
+- Then the system rejects the review  
+- And no review is saved
+
+*Scenario 3 \- edge / error path (duplicate review)*
+
+- Given the member has already reviewed the other party for this exchange  
+- When the member attempts to review again  
+- Then the system rejects the duplicate review
+
+*Scenario 4 \- permission rule (non-participant)*
+
+- Given an exchange has status COMPLETED  
+- And the member is not the poster or the recipient for that exchange  
+- When the member attempts to submit a review  
+- Then the system denies access  
+- And no review is saved
+
+**Notes / open questions / assumptions**
+
+- This story models the requirements Sample User Story \#2.
+
+#### US-19: View reviews for a completed exchange
+
+- **Source use case:** UC-19 (View reviews for a completed exchange)  
+- **Priority:** low  
+- **Actor:** member  
+- **Milestone:** Full features (R2)
+
+**Story:** As a member, I want to view the reviews left for a completed exchange so that I can see feedback, including any review left about me.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given an exchange has status COMPLETED  
+- And the member is the poster or the recipient for that exchange  
+- When the member opens the reviews for that exchange  
+- Then the system shows the reviews linked to it, including any review left about the viewing member
+
+*Scenario 2 \- edge / error path (no reviews yet)*
+
+- Given a completed exchange has no reviews yet  
+- When a participant opens the reviews  
+- Then the system shows that there are no reviews yet
+
+*Scenario 3 \- permission rule (non-participant)*
+
+- Given a member who is not a participant in the exchange  
+- When that member attempts to view the reviews  
+- Then the system denies access
+
+**Notes / open questions / assumptions**
+
+- None.
+
+### 2.8 Notifications and dashboard
+
+#### US-20: View status notifications
+
+- **Source use case:** UC-20 (View status notifications)  
+- **Priority:** medium  
+- **Actor:** member  
+- **Milestone:** Full features (R2)
+
+**Story:** As a member, I want to open and read in-app notifications about exchange status changes so that I know when I need to act.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the member is logged in  
+- And the member has notifications  
+- When the member opens their notifications  
+- Then the system shows them newest first  
+- And the member can open the related exchange
+
+*Scenario 2 \- edge / error path (none)*
+
+- Given the member has no notifications  
+- When the member opens their notifications  
+- Then the system shows an empty list
+
+**Notes / open questions / assumptions**
+
+- Notifications are generated as steps inside the request stories (US-08, US-10, US-11, US-16, US-17). This story is only the member viewing them.  
+- Email or SMS notifications are out of scope for this story set.
+
+#### US-21: View my dashboard and activity overview
+
+- **Source use case:** UC-21 (View my dashboard and activity overview)  
+- **Priority:** high  
+- **Actor:** member  
+- **Milestone:** Full features (R2)
+
+**Story:** As a member, I want a single dashboard of my activity so that I can see my active listings, incoming and outgoing requests, and exchange history in one place.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the member is logged in  
+- When the member opens their dashboard  
+- Then the system shows their active listings, incoming requests, outgoing requests, and exchange history, grouped by status  
+- And each status-based action links to its own feature (approve or deny a request, withdraw a request, deactivate a listing, confirm pickup, complete an exchange)
+
+*Scenario 2 \- edge / error path (no activity)*
+
+- Given the member has no activity yet  
+- When the member opens their dashboard  
+- Then the system shows empty groups
+
+**Notes / open questions / assumptions**
+
+- The dashboard only views activity. The status-based actions live in their own stories: US-10, US-11, US-15, US-16, and US-17.
+
+### 2.9 Admin
+
+#### US-22: Suspend a user
+
+- **Source use case:** UC-22 (Suspend a user)  
+- **Priority:** medium  
+- **Actor:** admin  
+- **Milestone:** Full features (R2)
+
+**Story:** As an admin, I want to suspend a member account so that a misbehaving user can no longer log in or take member actions.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the admin is logged in with admin rights  
+- And the target account exists  
+- When the admin suspends the account  
+- Then the system marks the account suspended  
+- And the account can no longer log in or take member actions
+
+*Scenario 2 \- permission rule (non-admin)*
+
+- Given a user without admin rights  
+- When that user attempts to suspend an account  
+- Then the system denies the action  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- The suspended state is referenced by US-02, US-04, US-08, US-13, and US-14. Confirm whether suspension can be reversed; reinstatement is not yet a story.
+
+#### US-23: Deactivate a listing as admin
+
+- **Source use case:** UC-23 (Deactivate a listing as admin)  
+- **Priority:** medium  
+- **Actor:** admin  
+- **Milestone:** Full features (R2)
+
+**Story:** As an admin, I want to deactivate any listing so that I can hide it from browsing without deleting its audit history.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the admin is logged in with admin rights  
+- And the listing exists  
+- When the admin deactivates the listing  
+- Then the system hides the listing from browsing  
+- And keeps its audit history
+
+*Scenario 2 \- permission rule (non-admin)*
+
+- Given a user without admin rights  
+- When that user attempts to deactivate a listing as admin  
+- Then the system denies the action  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- None.
+
+#### US-24: Generate basic reports
+
+- **Source use case:** UC-24 (Generate basic reports)  
+- **Priority:** low  
+- **Actor:** admin  
+- **Milestone:** Full features (R2)
+
+**Story:** As an admin, I want to generate a basic report about system activity so that I can see how the exchange is being used.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the admin is logged in with admin rights  
+- When the admin generates a report  
+- Then the system computes the report  
+- And shows it to the admin
+
+*Scenario 2 \- permission rule (non-admin)*
+
+- Given a user without admin rights  
+- When that user attempts to generate a report  
+- Then the system denies the action
+
+**Notes / open questions / assumptions**
+
+- ASSUMPTION: to keep this verifiable, assume at least one concrete report type, an active-listing count and a completed-exchange count. The full set of report types is an open question for the cross-team review packet.
+
+### 2.10 Listing photos
+
+#### US-25: Add and manage listing photos
+
+- **Source use case:** UC-13 (optional photos during create), UC-14 (add, replace, or remove photos during edit)  
+- **Priority:** low  
+- **Actor:** poster  
+- **Milestone:** Full features (R2)
+
+**Story:** As a poster, I want to add, replace, and remove photos on my listing so that members can see what the item looks like.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path (add during create or edit)*
+
+- Given the poster owns the listing  
+- When the poster adds one or more photos and saves  
+- Then the system stores the photos with the listing
+
+*Scenario 2 \- normal / valid path (replace or remove)*
+
+- Given the poster owns a listing that already has photos  
+- When the poster replaces or removes a photo and saves  
+- Then the system updates the listing's photos
+
+*Scenario 3 \- permission rule (not the owner)*
+
+- Given the listing belongs to another member  
+- When the member attempts to change its photos  
+- Then the system denies the action  
+- And the photos do not change
+
+**Notes / open questions / assumptions**
+
+- Photos are optional on a listing. Confirm allowed file types and a maximum size or count before building.
+
 ## 3\. Traceability table
 
 This table is the authoritative story list for the current scope. It traces each story back to its source use case and forward to the requirement or in-scope deliverable it satisfies. This gives two-way traceability: requirements and in-scope deliverables \-\> current-scope use cases \-\> user stories.
@@ -481,6 +937,19 @@ This table is the authoritative story list for the current scope. It traces each
 | US-10 | Approve or deny the next request in the queue | UC-10 | Handle requests in order; no over-claim |
 | US-11 | Withdraw a queued request | UC-11 | Withdraw a pending request |
 | US-12 | Send and read messages in the exchange thread | UC-12 | Private message thread per exchange |
+| US-13 | Create a listing | UC-13 | Post listings with description, category, quantity, tags, and pickup window |
+| US-14 | Edit a listing | UC-14 | Edit own listings |
+| US-15 | Deactivate own listing | UC-15 | Deactivate own listings |
+| US-16 | Confirm pickup | UC-16 | Request lifecycle: APPROVED \-\> PICKED\_UP |
+| US-17 | Complete an exchange | UC-17 | Request lifecycle: PICKED\_UP \-\> COMPLETED |
+| US-18 | Leave a rating and review after completion | UC-18 | Ratings and reviews after a completed exchange |
+| US-19 | View reviews for a completed exchange | UC-19 | Reviews visible to exchange participants |
+| US-20 | View status notifications | UC-20 | In-app notifications for status changes |
+| US-21 | View my dashboard and activity overview | UC-21 | Personal dashboard of listings, requests, and history |
+| US-22 | Suspend a user | UC-22 | Admin: suspend users |
+| US-23 | Deactivate a listing as admin | UC-23 | Admin: deactivate listings without deleting audit history |
+| US-24 | Generate basic reports | UC-24 | Admin: generate basic reports |
+| US-25 | Add and manage listing photos | UC-13, UC-14 | Photo uploads on listings |
 
 ## 4\. Assumptions and open questions
 

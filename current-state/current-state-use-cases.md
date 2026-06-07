@@ -37,7 +37,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - Token is invalid, expired, or already used: the system rejects registration and creates no account.  
   - Required account details are missing or malformed: the system rejects the submission and shows a validation error.  
 - Postconditions: A member account exists and the invite token is marked as used.  
-- Related user stories: TBD.
+- Related user stories: US-01.
 
 #### Use Case UC-02: Log in
 
@@ -55,7 +55,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - Credentials do not match: the system denies login and starts no session.  
   - The account is suspended: the system denies login and tells the Member the account is suspended.  
 - Postconditions: The Member has an active authenticated session.  
-- Related user stories: TBD.
+- Related user stories: US-02.
 
 #### Use Case UC-03: Log out
 
@@ -71,7 +71,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The session has already expired: the system simply returns the Member to the public view.  
 - Postconditions: The Member has no active session.  
-- Related user stories: TBD.
+- Related user stories: US-03.
 
 #### Use Case UC-04: Invite a new member
 
@@ -88,7 +88,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The issuer is not allowed to invite: the system denies the action and creates no token.  
   - The member is suspended: the system denies the action and creates no token.  
 - Postconditions: A new, unused invite token exists.  
-- Related user stories: TBD.
+- Related user stories: US-04.
 
 #### Use Case UC-05: Manage member profile
 
@@ -106,7 +106,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A profile field is missing or malformed: the system rejects the change and shows a validation error.  
   - A Member tries to edit another member's profile: the system denies the action.  
 - Postconditions: The Member's profile reflects the saved changes.  
-- Related user stories: TBD.
+- Related user stories: US-05.
 
 ### 3.2 Discovery
 
@@ -124,7 +124,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - No listings match: the system shows an empty result.  
 - Postconditions: The Member sees the set of active listings that match.  
-- Related user stories: TBD.
+- Related user stories: US-06.
 
 #### Use Case UC-07: View listing details
 
@@ -139,7 +139,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The listing is no longer active: the system tells the Member the listing is unavailable.  
 - Postconditions: The Member has seen the listing's full details.  
-- Related user stories: TBD.
+- Related user stories: US-07.
 
 ### 3.3 Request queue
 
@@ -161,7 +161,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - Requested amount is zero or negative: the system rejects it and shows a validation error.  
   - The Recipient already has an open request on this listing: the system prevents a duplicate request.  
 - Postconditions: A request exists with status REQUESTED, queued in the order it was received, and the Poster has been notified.  
-- Related user stories: TBD.
+- Related user stories: US-08.
 
 #### Use Case UC-09: View the request queue for a listing
 
@@ -177,7 +177,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who does not own the listing tries to view its queue: the system denies access.  
   - There are no pending requests: the system shows an empty queue.  
 - Postconditions: The Poster has seen the current request queue.  
-- Related user stories: TBD.
+- Related user stories: US-09.
 
 #### Use Case UC-10: Approve or deny the next request in the queue
 
@@ -197,7 +197,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who does not own the listing tries to handle the request: the system denies access.  
   - The request is not in REQUESTED status: the system rejects the action.  
 - Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. DENIED is terminal.  
-- Related user stories: TBD.
+- Related user stories: US-10.
 
 #### Use Case UC-11: Withdraw a queued request
 
@@ -215,7 +215,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is already APPROVED or DENIED: the system rejects the withdrawal, because only a pending request can be withdrawn in this scope.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
 - Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, and the Poster has been notified. The remaining quantity is unchanged, because only an approval reduces it and only a REQUESTED request can be withdrawn.  
-- Related user stories: TBD.
+- Related user stories: US-11.
 
 ### 3.4 Coordination
 
@@ -235,7 +235,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who is not the Poster or the Recipient for that exchange tries to open the thread: the system denies access.  
   - The message is empty: the system rejects it.  
 - Postconditions: The message is saved to the exchange thread and visible to both parties.  
-- Related user stories: TBD.
+- Related user stories: US-12.
 
 ### 3.5 Listings
 
@@ -256,7 +256,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The Poster also adds one or more optional photos: the system stores the photos with the listing.  
   - The member is suspended: the system denies the action and creates no listing.  
 - Postconditions: A new active listing exists with the entered details.  
-- Related user stories: TBD.
+- Related user stories: US-13, US-25 (photos).
 
 #### Use Case UC-14: Edit a listing
 
@@ -276,7 +276,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member tries to edit a listing they do not own: the system denies the action.  
   - The member is suspended: the system denies the action and saves no change.  
 - Postconditions: The listing reflects the saved changes.  
-- Related user stories: TBD.
+- Related user stories: US-14, US-25 (photos).
 
 #### Use Case UC-15: Deactivate own listing
 
@@ -292,7 +292,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A Member tries to deactivate a listing they do not own: the system denies the action.  
 - Postconditions: The listing is inactive and no longer appears in browsing.  
-- Related user stories: TBD.
+- Related user stories: US-15.
 
 ### 3.6 Pickup and completion
 
@@ -312,7 +312,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is not in APPROVED status: the system rejects the action and changes nothing.  
   - A Member who is not the requester tries to confirm pickup: the system denies the action.  
 - Postconditions: The request has status PICKED\_UP and the Poster has been notified.  
-- Related user stories: TBD.
+- Related user stories: US-16.
 
 #### Use Case UC-17: Complete an exchange
 
@@ -330,7 +330,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is not in PICKED\_UP status: the system rejects the action.  
   - A Member who does not own the listing tries to complete the exchange: the system denies the action.  
 - Postconditions: The request has status COMPLETED and the Recipient has been notified.  
-- Related user stories: TBD.
+- Related user stories: US-17.
 
 ### 3.7 Reviews
 
@@ -351,7 +351,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who is not a participant tries to review: the system denies access.  
   - The Member has already reviewed the other party for this exchange: the system rejects the duplicate review.  
 - Postconditions: The review is saved, linked to the completed exchange, and visible to the reviewed party.  
-- Related user stories: TBD.
+- Related user stories: US-18.
 
 #### Use Case UC-19: View reviews for a completed exchange
 
@@ -367,7 +367,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - No review has been left yet: the system shows that there are no reviews yet.  
   - A Member who is not a participant tries to view the reviews: the system denies access.  
 - Postconditions: The Member has seen the reviews for the completed exchange.  
-- Related user stories: TBD.
+- Related user stories: US-19.
 
 ### 3.8 Notifications and dashboard
 
@@ -385,7 +385,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - There are no notifications: the system shows an empty list.  
 - Postconditions: The Member has seen their current notifications.  
-- Related user stories: TBD.
+- Related user stories: US-20.
 
 #### Use Case UC-21: View my dashboard and activity overview
 
@@ -401,7 +401,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The Member has no activity yet: the system shows empty groups.  
 - Postconditions: The Member has seen their current activity overview.  
-- Related user stories: TBD.
+- Related user stories: US-21.
 
 ### 3.9 Admin
 
@@ -419,7 +419,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to suspend a user: the system denies the action.  
 - Postconditions: The account is suspended and cannot log in or take member actions.  
-- Related user stories: TBD.
+- Related user stories: US-22.
 
 #### Use Case UC-23: Deactivate a listing as admin
 
@@ -435,7 +435,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to deactivate a listing as admin: the system denies the action.  
 - Postconditions: The listing is hidden from browsing and its audit history is kept.  
-- Related user stories: TBD.
+- Related user stories: US-23.
 
 #### Use Case UC-24: Generate basic reports
 
@@ -451,7 +451,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to generate a report: the system denies the action.  
 - Postconditions: The Admin has seen the generated report.  
-- Related user stories: TBD.
+- Related user stories: US-24.
 
 ## 4\. Assumptions and open questions
 
