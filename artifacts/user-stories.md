@@ -557,7 +557,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- Confirm what happens to requests already in progress on a listing that is deactivated. Assumption: existing requests continue through their lifecycle; only new requests are blocked.
+- Confirm what happens to requests already in progress on a listing that is deactivated. Assumption: existing requests continue as normal; only new requests are blocked.
 
 ### 2.6 Pickup and completion
 
@@ -751,7 +751,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Given the member is logged in  
 - When the member opens their dashboard  
 - Then the system shows their active listings, incoming requests, outgoing requests, and exchange history, grouped by status  
-- And each status-based action links to its own feature (approve or deny a request, withdraw a request, deactivate a listing, confirm pickup, complete an exchange)
+- And each item links to the action that fits its status (approve or deny a request, withdraw a request, deactivate a listing, confirm pickup, complete an exchange)
 
 *Scenario 2 \- edge / error path (no activity)*
 
