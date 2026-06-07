@@ -9,7 +9,7 @@ The items below are not yet team-approved. Each one should be confirmed or chang
 | ID | Type | Item | Affected stories and use cases | Status |
 | --- | --- | --- | --- | --- |
 | OQA-01 | Open question | Token expiry rules are not yet defined. Confirm whether invite tokens expire and, if so, after how long. | US-01, UC-01 | Open |
-| OQA-02 | Open question and assumption | Registration is invite-only, but who issues invite tokens is not decided. Assumed a member may issue invite tokens. Confirm whether any active member can invite, or only an admin. If the issuer is not decided, keep US-01 as core and treat US-04 as optional or pending. | US-04, UC-04 | Open |
+| OQA-02 | Open question and assumption | Registration is invite-only, but who issues invite tokens is not decided. Assumed a member may issue invite tokens. Confirm whether any active member can invite, or only an admin. | US-04, UC-04 | Open |
 | OQA-03 | Assumption | The poster handles requests in the order they are received. | US-10, UC-10 | Open |
 | OQA-04 | Open question | Confirm that cancelling an approved request should restore the requested quantity to the listing. | US-26, UC-11 | Open |
 | OQA-05 | Open question and assumption | Confirm what happens to requests already in progress on a listing that is deactivated. Assumed existing requests continue as normal and only new requests are blocked. | US-15, UC-15 | Open |

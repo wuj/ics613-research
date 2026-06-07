@@ -152,7 +152,7 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 **Notes**
 
-- Photos are not part of the current listing detail view in this slice.
+- Photos are not part of the current listing detail view.
 
 #### US-30: View another member's public profile
 
@@ -284,7 +284,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 **Notes**
 
 - A denial is final: the request cannot change status again.
-- Approve and deny are two outcomes of one decision, so they are scenarios in this one story, not separate stories.
 
 #### US-11: Withdraw a queued request
 
