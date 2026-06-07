@@ -4,11 +4,11 @@
 
 This document holds the user stories for the Local Produce Exchange. It is the companion to the team's use cases, the Team Charter, and project requirements. Each story names a user, the goal that user wants, and the benefit they get, followed by acceptance criteria. 
 
-Every story has a "Source use case(s)" so each one is traceable back to the current-scope use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel.
+Every story has a "Source use case(s)" so each one is traceable back to the use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel.
 
 ## 2\. The user stories
 
-Scenarios cover the normal path, and add edge or error and permission scenarios only where the action needs them.
+Scenarios cover the normal path, and add edge or error, workflow, and permission scenarios only where the action needs them.
 
 ### 2.1 Authentication and account
 
