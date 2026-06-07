@@ -1,16 +1,14 @@
 # Acceptance Criteria
 
-**Team 4** | Surplus (Local Produce Exchange)
-ICS 613 Software Engineering | University of Hawai'i at Manoa | Summer 2026
-Kennan Kaneshiro, Shea Stevens, Matt Ong, Kim Cates, Jeff Wu
+**Team:** Team 4 | Local Produce Exchange, "Surplus"\
+**Course:** ICS 613 Software Engineering | University of Hawai'i at Manoa | Summer 2026\
+**Members:** Kennan Kaneshiro, Shea Stevens, Matt Ong, Kim Cates, Jeff Wu
 
-These are the acceptance criteria for every user story, keyed by US-ID. The story statements and metadata are in the [user stories document](01-user-stories.md).
+These are the acceptance criteria for every user story, keyed by US-ID. The story statements and metadata are in the user stories document.
 
 ### Authentication and account
 
 #### US-01: Register with an invite token
-
-**Story:** [US-01: Register with an invite token](01-user-stories.md#us-01-register-with-an-invite-token)
 
 *Scenario 1 - normal / valid path*
 
@@ -37,8 +35,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-02: Log in
 
-**Story:** [US-02: Log in](01-user-stories.md#us-02-log-in)
-
 *Scenario 1 - normal / valid path*
 
 - Given the member has a registered account that is not suspended
@@ -61,8 +57,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-03: Log out
 
-**Story:** [US-03: Log out](01-user-stories.md#us-03-log-out)
-
 *Scenario 1 - normal / valid path*
 
 - Given the member is logged in
@@ -78,8 +72,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - And no error is shown
 
 #### US-04: Invite a new member
-
-**Story:** [US-04: Invite a new member](01-user-stories.md#us-04-invite-a-new-member)
 
 *Scenario 1 - normal / valid path*
 
@@ -104,8 +96,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - And no token is created
 
 #### US-05: View and update member profile
-
-**Story:** [US-05: View and update member profile](01-user-stories.md#us-05-view-and-update-member-profile)
 
 *Scenario 1 - normal / valid path*
 
@@ -133,8 +123,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-06: Browse, search, and filter active listings
 
-**Story:** [US-06: Browse, search, and filter active listings](01-user-stories.md#us-06-browse-search-and-filter-active-listings)
-
 *Scenario 1 - normal / valid path*
 
 - Given the member is logged in
@@ -148,8 +136,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - Then the system shows an empty result
 
 #### US-07: View listing details
-
-**Story:** [US-07: View listing details](01-user-stories.md#us-07-view-listing-details)
 
 *Scenario 1 - normal / valid path*
 
@@ -169,8 +155,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - Photos are not part of the current listing detail view in this slice.
 
 #### US-30: View another member's public profile
-
-**Story:** [US-30: View another member's public profile](01-user-stories.md#us-30-view-another-members-public-profile)
 
 *Scenario 1 - normal / valid path*
 
@@ -197,8 +181,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 ### Request queue
 
 #### US-08: Submit a request for an item
-
-**Story:** [US-08: Submit a request for an item](01-user-stories.md#us-08-submit-a-request-for-an-item)
 
 *Scenario 1 - normal / valid path*
 
@@ -239,8 +221,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-09: View the request queue for a listing
 
-**Story:** [US-09: View the request queue for a listing](01-user-stories.md#us-09-view-the-request-queue-for-a-listing)
-
 *Scenario 1 - normal / valid path*
 
 - Given the poster owns the listing
@@ -260,8 +240,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - Then the system denies access
 
 #### US-10: Approve or deny a pending request
-
-**Story:** [US-10: Approve or deny a pending request](01-user-stories.md#us-10-approve-or-deny-a-pending-request)
 
 *Scenario 1 - normal / valid path (approve)*
 
@@ -310,8 +288,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-11: Withdraw a queued request
 
-**Story:** [US-11: Withdraw a queued request](01-user-stories.md#us-11-withdraw-a-queued-request)
-
 *Scenario 1 - normal / valid path*
 
 - Given the recipient owns a request with status REQUESTED
@@ -340,8 +316,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-26: Cancel an approved request
 
-**Story:** [US-26: Cancel an approved request](01-user-stories.md#us-26-cancel-an-approved-request)
-
 *Scenario 1 - normal / valid path*
 
 - Given the recipient owns a request with status APPROVED
@@ -367,8 +341,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 ### Coordination
 
 #### US-12: Send and read messages in the exchange thread
-
-**Story:** [US-12: Send and read messages in the exchange thread](01-user-stories.md#us-12-send-and-read-messages-in-the-exchange-thread)
 
 *Scenario 1 - normal / valid path*
 
@@ -397,8 +369,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-13: Create a listing
 
-**Story:** [US-13: Create a listing](01-user-stories.md#us-13-create-a-listing)
-
 *Scenario 1 - normal / valid path*
 
 - Given the poster is a registered, active member
@@ -423,12 +393,10 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 **Notes**
 
-- Optional photo uploads during create are covered by [US-25](01-user-stories.md#us-25-add-and-manage-listing-photos).
+- Optional photo uploads during create are covered by US-25.
 - The listing's remaining quantity starts equal to the quantity available.
 
 #### US-14: Edit a listing
-
-**Story:** [US-14: Edit a listing](01-user-stories.md#us-14-edit-a-listing)
 
 *Scenario 1 - normal / valid path*
 
@@ -461,11 +429,9 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 **Notes**
 
-- Adding, replacing, or removing photos during edit is covered by [US-25](01-user-stories.md#us-25-add-and-manage-listing-photos).
+- Adding, replacing, or removing photos during edit is covered by US-25.
 
 #### US-15: Deactivate own listing
-
-**Story:** [US-15: Deactivate own listing](01-user-stories.md#us-15-deactivate-own-listing)
 
 *Scenario 1 - normal / valid path*
 
@@ -484,8 +450,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 ### Pickup and completion
 
 #### US-16: Confirm pickup
-
-**Story:** [US-16: Confirm pickup](01-user-stories.md#us-16-confirm-pickup)
 
 *Scenario 1 - normal / valid path*
 
@@ -509,8 +473,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - And nothing changes
 
 #### US-17: Complete an exchange
-
-**Story:** [US-17: Complete an exchange](01-user-stories.md#us-17-complete-an-exchange)
 
 *Scenario 1 - normal / valid path*
 
@@ -537,8 +499,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 ### Reviews
 
 #### US-18: Leave a rating and review after completion
-
-**Story:** [US-18: Leave a rating and review after completion](01-user-stories.md#us-18-leave-a-rating-and-review-after-completion)
 
 *Scenario 1 - normal / valid path*
 
@@ -573,8 +533,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-19: View reviews for a completed exchange
 
-**Story:** [US-19: View reviews for a completed exchange](01-user-stories.md#us-19-view-reviews-for-a-completed-exchange)
-
 *Scenario 1 - normal / valid path*
 
 - Given an exchange has status COMPLETED
@@ -598,8 +556,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-20: View status notifications
 
-**Story:** [US-20: View status notifications](01-user-stories.md#us-20-view-status-notifications)
-
 *Scenario 1 - normal / valid path*
 
 - Given the member is logged in
@@ -620,8 +576,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-28: Mark a notification as read
 
-**Story:** [US-28: Mark a notification as read](01-user-stories.md#us-28-mark-a-notification-as-read)
-
 *Scenario 1 - normal / valid path*
 
 - Given the member is logged in
@@ -638,8 +592,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - And nothing changes
 
 #### US-21: View my dashboard and activity overview
-
-**Story:** [US-21: View my dashboard and activity overview](01-user-stories.md#us-21-view-my-dashboard-and-activity-overview)
 
 *Scenario 1 - normal / valid path*
 
@@ -658,8 +610,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-22: Suspend a user
 
-**Story:** [US-22: Suspend a user](01-user-stories.md#us-22-suspend-a-user)
-
 *Scenario 1 - normal / valid path*
 
 - Given the admin is logged in with admin rights
@@ -676,8 +626,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - And nothing changes
 
 #### US-27: Unsuspend a user
-
-**Story:** [US-27: Unsuspend a user](01-user-stories.md#us-27-unsuspend-a-user)
 
 *Scenario 1 - normal / valid path*
 
@@ -696,8 +644,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-23: Deactivate a listing as admin
 
-**Story:** [US-23: Deactivate a listing as admin](01-user-stories.md#us-23-deactivate-a-listing-as-admin)
-
 *Scenario 1 - normal / valid path*
 
 - Given the admin is logged in with admin rights
@@ -715,8 +661,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 
 #### US-24: Generate basic reports
 
-**Story:** [US-24: Generate basic reports](01-user-stories.md#us-24-generate-basic-reports)
-
 *Scenario 1 - normal / valid path*
 
 - Given the admin is logged in with admin rights
@@ -731,8 +675,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 - Then the system denies the action
 
 #### US-29: View member profile as admin
-
-**Story:** [US-29: View member profile as admin](01-user-stories.md#us-29-view-member-profile-as-admin)
 
 *Scenario 1 - normal / valid path*
 
@@ -764,8 +706,6 @@ These are the acceptance criteria for every user story, keyed by US-ID. The stor
 ### Listing photos
 
 #### US-25: Add and manage listing photos
-
-**Story:** [US-25: Add and manage listing photos](01-user-stories.md#us-25-add-and-manage-listing-photos)
 
 *Scenario 1 - normal / valid path (add during create or edit)*
 

@@ -1,10 +1,10 @@
 # User Stories
 
-**Team 4** | Surplus (Local Produce Exchange)
-ICS 613 Software Engineering | University of Hawai'i at Manoa | Summer 2026
-Kennan Kaneshiro, Shea Stevens, Matt Ong, Kim Cates, Jeff Wu
+**Team:** Team 4 | Local Produce Exchange, "Surplus"\
+**Course:** ICS 613 Software Engineering | University of Hawai'i at Manoa | Summer 2026\
+**Members:** Kennan Kaneshiro, Shea Stevens, Matt Ong, Kim Cates, Jeff Wu
 
-These are the team's user stories, in the team's grouping and order. Each story's acceptance criteria are in the [acceptance criteria document](02-acceptance-criteria.md) under the same US-ID.
+These are the team's user stories. Each story's acceptance criteria are in the acceptance criteria document under the same US-ID.
 
 ### Authentication and account
 
@@ -16,7 +16,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** guest
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-01 acceptance criteria](02-acceptance-criteria.md#us-01-register-with-an-invite-token)
 
 #### US-02: Log in
 
@@ -26,7 +25,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-02 acceptance criteria](02-acceptance-criteria.md#us-02-log-in)
 
 #### US-03: Log out
 
@@ -36,7 +34,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-03 acceptance criteria](02-acceptance-criteria.md#us-03-log-out)
 
 #### US-04: Invite a new member
 
@@ -46,7 +43,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-04 acceptance criteria](02-acceptance-criteria.md#us-04-invite-a-new-member)
 
 #### US-05: View and update member profile
 
@@ -56,7 +52,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-05 acceptance criteria](02-acceptance-criteria.md#us-05-view-and-update-member-profile)
 
 ### Discovery
 
@@ -68,7 +63,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-06 acceptance criteria](02-acceptance-criteria.md#us-06-browse-search-and-filter-active-listings)
 
 #### US-07: View listing details
 
@@ -78,7 +72,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-07 acceptance criteria](02-acceptance-criteria.md#us-07-view-listing-details)
 
 #### US-30: View another member's public profile
 
@@ -88,7 +81,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** low
 - **Actor:** member
 - **Milestone:** Full Features (R2)
-- **Acceptance criteria:** [US-30 acceptance criteria](02-acceptance-criteria.md#us-30-view-another-members-public-profile)
 
 ### Request queue
 
@@ -100,7 +92,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** recipient
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-08 acceptance criteria](02-acceptance-criteria.md#us-08-submit-a-request-for-an-item)
 
 #### US-09: View the request queue for a listing
 
@@ -110,7 +101,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** poster
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-09 acceptance criteria](02-acceptance-criteria.md#us-09-view-the-request-queue-for-a-listing)
 
 #### US-10: Approve or deny a pending request
 
@@ -120,7 +110,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** poster
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-10 acceptance criteria](02-acceptance-criteria.md#us-10-approve-or-deny-a-pending-request)
 
 #### US-11: Withdraw a queued request
 
@@ -130,7 +119,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** recipient
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-11 acceptance criteria](02-acceptance-criteria.md#us-11-withdraw-a-queued-request)
 
 #### US-26: Cancel an approved request
 
@@ -140,7 +128,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** recipient
 - **Milestone:** Follow up scope (R2)
-- **Acceptance criteria:** [US-26 acceptance criteria](02-acceptance-criteria.md#us-26-cancel-an-approved-request)
 
 ### Coordination
 
@@ -152,7 +139,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Current scope (R1)
-- **Acceptance criteria:** [US-12 acceptance criteria](02-acceptance-criteria.md#us-12-send-and-read-messages-in-the-exchange-thread)
 
 ### Listings
 
@@ -164,7 +150,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** poster
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-13 acceptance criteria](02-acceptance-criteria.md#us-13-create-a-listing)
 
 #### US-14: Edit a listing
 
@@ -174,7 +159,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** poster
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-14 acceptance criteria](02-acceptance-criteria.md#us-14-edit-a-listing)
 
 #### US-15: Deactivate own listing
 
@@ -184,7 +168,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** poster
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-15 acceptance criteria](02-acceptance-criteria.md#us-15-deactivate-own-listing)
 
 ### Pickup and completion
 
@@ -196,7 +179,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** recipient
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-16 acceptance criteria](02-acceptance-criteria.md#us-16-confirm-pickup)
 
 #### US-17: Complete an exchange
 
@@ -206,7 +188,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** poster
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-17 acceptance criteria](02-acceptance-criteria.md#us-17-complete-an-exchange)
 
 ### Reviews
 
@@ -218,7 +199,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-18 acceptance criteria](02-acceptance-criteria.md#us-18-leave-a-rating-and-review-after-completion)
 
 #### US-19: View reviews for a completed exchange
 
@@ -228,7 +208,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** low
 - **Actor:** member
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-19 acceptance criteria](02-acceptance-criteria.md#us-19-view-reviews-for-a-completed-exchange)
 
 ### Notifications and dashboard
 
@@ -240,7 +219,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** member
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-20 acceptance criteria](02-acceptance-criteria.md#us-20-view-status-notifications)
 
 #### US-28: Mark a notification as read
 
@@ -250,7 +228,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** low
 - **Actor:** member
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-28 acceptance criteria](02-acceptance-criteria.md#us-28-mark-a-notification-as-read)
 
 #### US-21: View my dashboard and activity overview
 
@@ -260,7 +237,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** high
 - **Actor:** member
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-21 acceptance criteria](02-acceptance-criteria.md#us-21-view-my-dashboard-and-activity-overview)
 
 ### Admin
 
@@ -272,7 +248,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** admin
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-22 acceptance criteria](02-acceptance-criteria.md#us-22-suspend-a-user)
 
 #### US-27: Unsuspend a user
 
@@ -282,7 +257,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** admin
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-27 acceptance criteria](02-acceptance-criteria.md#us-27-unsuspend-a-user)
 
 #### US-23: Deactivate a listing as admin
 
@@ -292,7 +266,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** admin
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-23 acceptance criteria](02-acceptance-criteria.md#us-23-deactivate-a-listing-as-admin)
 
 #### US-24: Generate basic reports
 
@@ -302,7 +275,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** low
 - **Actor:** admin
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-24 acceptance criteria](02-acceptance-criteria.md#us-24-generate-basic-reports)
 
 #### US-29: View member profile as admin
 
@@ -312,7 +284,6 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** medium
 - **Actor:** admin
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-29 acceptance criteria](02-acceptance-criteria.md#us-29-view-member-profile-as-admin)
 
 ### Listing photos
 
@@ -324,4 +295,3 @@ These are the team's user stories, in the team's grouping and order. Each story'
 - **Priority:** low
 - **Actor:** poster
 - **Milestone:** Full features (R2)
-- **Acceptance criteria:** [US-25 acceptance criteria](02-acceptance-criteria.md#us-25-add-and-manage-listing-photos)

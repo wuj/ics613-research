@@ -6,10 +6,8 @@
 
 This packet is for the ICS 613 cross-team requirements peer review. The reviewing team reads these documents looking for ambiguity, missing requirements, unrealistic scope, inconsistent workflows, unclear user roles, and missing edge cases.
 
-1. User stories (01-user-stories.md)
-2. Acceptance criteria (02-acceptance-criteria.md)
-3. User roles and personas (03-user-roles-personas.md)
-4. Open questions and assumptions (04-open-questions-assumptions.md)
-5. Known risks (05-known-risks.md)
-
-The packet was assembled from the team's charter, use cases, and user stories without changing them.
+1. User stories
+2. Acceptance criteria
+3. User roles and personas
+4. Open questions and assumptions
+5. Known risks
