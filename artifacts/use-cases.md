@@ -1,3 +1,8 @@
+**ICS 613 | Team 4**  
+Kennan Kaneshiro, Shea Stevens, Matt Ong, Kim Cates, Jeff Wu
+
+---
+
 # Use Cases: Local Produce Exchange
 
 ## 1\. Introduction
