@@ -189,7 +189,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Actor:** member  
 - **Milestone:** Current scope (R1)
 
-**Story:** As a member, I want to browse, search, and filter active listings so that I can find items of interest.
+**Story:** As a member, I want to browse, search, and filter active listings so that I can find items I want.
 
 **Acceptance criteria**
 
@@ -408,7 +408,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- You can’t withdraw a canceled request. Only a pending request can be withdrawn.
+- Only a pending request can be withdrawn.
 
 ### 2.4 Coordination
 
@@ -568,7 +568,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Actor:** recipient  
 - **Milestone:** Full features (R2)
 
-**Story:** As a recipient, I want to confirm that I picked up the item so that the exchange can move toward completion.
+**Story:** As a recipient, I want to confirm that I picked up the item so that the exchange can be completed.
 
 **Acceptance criteria**
 
