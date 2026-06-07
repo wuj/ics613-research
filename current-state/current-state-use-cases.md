@@ -8,7 +8,7 @@ The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
 ## 2\. Actors and Roles
 
-These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status.
+These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status. A listing's quantity available is the amount the Poster enters when creating the listing. The listing's remaining quantity starts equal to the quantity available and goes down as the Poster approves requests.
 
 * **Guest**: a person who holds an invite token but has not registered yet. A Guest can only register.  
 * **Member**: a registered, active user. A Member can browse, search, and filter listings, manage a profile, post listings, submit requests, send messages, leave reviews, and view a personal dashboard.  
@@ -135,7 +135,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Trigger: The Member selects a listing.  
 - Main success flow:  
   1. The Member selects a listing.  
-  2. The system shows the listing's full details, including the quantity available, the tags, and the pickup window.  
+  2. The system shows the listing's full details, including the remaining quantity, the tags, and the pickup window.  
 - Alternate and exception flows:  
   - The listing is no longer active: the system tells the Member the listing is unavailable.  
 - Postconditions: The Member has seen the listing's full details.  
@@ -148,16 +148,16 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Primary actor: Recipient  
 - Supporting actors: Poster (owns the listing); System (checks quantity, queues the request, notifies the Poster)  
 - Goal: Request a specific quantity from an active listing so the request enters the listing's queue and is handled in order.  
-- Preconditions: The Recipient is a registered, active member. The listing is active and has a quantity available.  
+- Preconditions: The Recipient is a registered, active member. The listing is active and its remaining quantity is greater than zero.  
 - Trigger: The Recipient opens an active listing and chooses to request it.  
 - Main success flow:  
   1. The Recipient opens an active listing.  
   2. The Recipient enters the quantity they want.  
-  3. The system checks the amount against the total quantity available.  
+  3. The system checks the amount against the listing's remaining quantity.  
   4. The system creates a request with status REQUESTED and places it at the end of the listing's queue.  
   5. The system notifies the Poster of the new request.  
 - Alternate and exception flows:  
-  - Requested amount is more than the total quantity available: the system rejects the request and creates no request.  
+  - Requested amount is more than the remaining quantity: the system rejects the request and creates no request.  
   - Requested amount is zero or negative: the system rejects it and shows a validation error.  
   - The Recipient already has an open request on this listing: the system prevents a duplicate request.  
 - Postconditions: A request exists with status REQUESTED, queued in the order it was received, and the Poster has been notified.  
@@ -172,7 +172,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Trigger: The Poster opens the request queue for one of their listings.  
 - Main success flow:  
   1. The Poster opens one of their listings.  
-  2. The system shows the pending requests in the order received, oldest first, with the quantity requested and the quantity remaining.  
+  2. The system shows the pending requests in the order received, oldest first, with the quantity requested and the remaining quantity.  
 - Alternate and exception flows:  
   - A Member who does not own the listing tries to view its queue: the system denies access.  
   - There are no pending requests: the system shows an empty queue.  
@@ -214,7 +214,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The request is already APPROVED or DENIED: the system rejects the withdrawal, because only a pending request can be withdrawn in this scope.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
-- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, the remaining quantity reflects any returned approval, and the Poster has been notified.  
+- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, and the Poster has been notified. The remaining quantity is unchanged, because only an approval reduces it and only a REQUESTED request can be withdrawn.  
 - Related user stories: TBD.
 
 ### 3.4 Coordination
@@ -338,7 +338,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 
 - Primary actor: Member (acting as the reviewer)  
 - Supporting actors: System (saves the review and makes it visible to the reviewed party)  
-- Goal: Leave a short rating and review of the other party after an exchange is completed, so the community can build trust.  
+- Goal: Leave a short rating and review of the other party after an exchange is completed, so the two parties can build trust through feedback on the exchange. (Open question: whether reviews should be visible beyond the two participants. See Section 4.)  
 - Preconditions: The exchange has status COMPLETED. The Member is the Poster or the Recipient for that exchange and has not already reviewed the other party.  
 - Trigger: The Member chooses to leave a review for the completed exchange.  
 - Main success flow:  
@@ -459,5 +459,9 @@ The team has not yet approved the items below. Each must be reviewed and either 
 
 | ID | Type | Item | Affected use cases | Status |
 | :---- | :---- | :---- | :---- | :---- |
-|  |  |  |  |  |
+| AS-01 | Assumption | Any active Member may issue invite tokens. | UC-04 | Open |
+| AS-02 | Assumption | The Poster handles requests in the order received. | UC-10 | Open |
+| AS-03 | Assumption | The Recipient is the party who confirms pickup. | UC-16 | Open |
+| AS-04 | Assumption | The Poster is the party who marks the exchange complete. | UC-17 | Open |
+| Q-01 | Question | Should reviews be visible to members beyond the two participants (for example, on member profiles)? The requirements give community trust as the motivation, but the acceptance criteria only make a review visible to the reviewed party. | UC-18, UC-19 | Open |
 
