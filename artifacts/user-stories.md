@@ -370,7 +370,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 **Notes / open questions / assumptions**
 
 - DENIED is terminal.  
-- ASSUMPTION: the poster handles requests in the order received. Confirm this with the team.  
+- The poster handles requests in the order they are received.  
 - Approve and deny are two outcomes of one decision, so they are scenarios in this one story, not separate stories.
 
 #### US-11: Withdraw a queued request
