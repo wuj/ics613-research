@@ -4,7 +4,7 @@
 
 This document holds the user stories for the Local Produce Exchange. It is the companion to the team's use cases, the Team Charter, and project requirements. Each story names a user, the goal that user wants, and the benefit they get, followed by acceptance criteria. 
 
-Every story has a "Source use case(s)" so each one is traceable back to the current-scope use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel. There are 25 stories, US-01 through US-25, which lands inside the 25 to 30 range the course requires. Story numbers line up with use case numbers: US-01 through US-24 map one to one to UC-01 through UC-24, and US-25 covers the optional listing photos inside UC-13 and UC-14.
+Every story has a "Source use case(s)" so each one is traceable back to the current-scope use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel.
 
 ## 2\. The user stories
 
@@ -80,10 +80,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - When the member submits correct credentials  
 - Then the system denies login  
 - And tells the member the account is suspended
-
-**Notes / open questions / assumptions**
-
-- Suspending an account is an admin feature (US-22, scheduled for R2), but the suspended state is still checked at login.
 
 #### US-03: Log out
 
@@ -184,10 +180,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Then the system denies the action  
 - And nothing changes
 
-**Notes / open questions / assumptions**
-
-- None.
-
 ### 2.2 Discovery
 
 #### US-06: Browse, search, and filter active listings
@@ -212,11 +204,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Given the member is logged in  
 - When no active listings match the search or filters  
 - Then the system shows an empty result
-
-**Notes / open questions / assumptions**
-
-- Listings are seeded for R1; creating listings is covered by US-13 in R2.  
-- Confirm the exact filter set. At minimum: category and dietary and allergen tags.
 
 #### US-07: View listing details
 
@@ -329,10 +316,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - When that member attempts to view the listing's queue  
 - Then the system denies access
 
-**Notes / open questions / assumptions**
-
-- None.
-
 #### US-10: Approve or deny the next request in the queue
 
 - **Source use case:** UC-10 (Approve or deny the next request in the queue)  
@@ -425,7 +408,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 **Notes / open questions / assumptions**
 
-- CANCELLED is terminal. In this scope, only a pending request can be withdrawn.
+- You can’t withdraw a canceled request. Only a pending request can be withdrawn.
 
 ### 2.4 Coordination
 
@@ -610,10 +593,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Then the system denies the action  
 - And nothing changes
 
-**Notes / open questions / assumptions**
-
-- ASSUMPTION: the recipient owns the move to PICKED\_UP. Confirm this with the team.
-
 #### US-17: Complete an exchange
 
 - **Source use case:** UC-17 (Complete an exchange)  
@@ -646,10 +625,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - When that member attempts to complete the exchange  
 - Then the system denies the action  
 - And nothing changes
-
-**Notes / open questions / assumptions**
-
-- ASSUMPTION: the poster owns the move to COMPLETED. Confirm this with the team.
 
 ### 2.7 Reviews
 
@@ -694,10 +669,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - When the member attempts to submit a review  
 - Then the system denies access  
 - And no review is saved
-
-**Notes / open questions / assumptions**
-
-- This story models the requirements Sample User Story \#2.
 
 #### US-19: View reviews for a completed exchange
 
@@ -762,7 +733,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 **Notes / open questions / assumptions**
 
-- Notifications are generated as steps inside the request stories (US-08, US-10, US-11, US-16, US-17). This story is only the member viewing them.  
 - Email or SMS notifications are out of scope for this story set.
 
 #### US-21: View my dashboard and activity overview
@@ -788,10 +758,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Given the member has no activity yet  
 - When the member opens their dashboard  
 - Then the system shows empty groups
-
-**Notes / open questions / assumptions**
-
-- The dashboard only views activity. The status-based actions live in their own stories: US-10, US-11, US-15, US-16, and US-17.
 
 ### 2.9 Admin
 
@@ -821,10 +787,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Then the system denies the action  
 - And nothing changes
 
-**Notes / open questions / assumptions**
-
-- The suspended state is referenced by US-02, US-04, US-08, US-13, and US-14. Confirm whether suspension can be reversed; reinstatement is not yet a story.
-
 #### US-23: Deactivate a listing as admin
 
 - **Source use case:** UC-23 (Deactivate a listing as admin)  
@@ -851,10 +813,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Then the system denies the action  
 - And nothing changes
 
-**Notes / open questions / assumptions**
-
-- None.
-
 #### US-24: Generate basic reports
 
 - **Source use case:** UC-24 (Generate basic reports)  
@@ -878,10 +836,6 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - Given a user without admin rights  
 - When that user attempts to generate a report  
 - Then the system denies the action
-
-**Notes / open questions / assumptions**
-
-- ASSUMPTION: to keep this verifiable, assume at least one concrete report type, an active-listing count and a completed-exchange count. The full set of report types is an open question for the cross-team review packet.
 
 ### 2.10 Listing photos
 
@@ -919,39 +873,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 
 - Photos are optional on a listing. Confirm allowed file types and a maximum size or count before building.
 
-## 3\. Traceability table
-
-This table is the authoritative story list for the current scope. It traces each story back to its source use case and forward to the requirement or in-scope deliverable it satisfies. This gives two-way traceability: requirements and in-scope deliverables \-\> current-scope use cases \-\> user stories.
-
-| Story ID | Title | Source use case | Requirement / in-scope source |
-| :---- | :---- | :---- | :---- |
-| US-01 | Register with an invite token | UC-01 | Join only via invitation; create a member account |
-| US-02 | Log in | UC-02 | Member login |
-| US-03 | Log out | UC-03 | Member logout |
-| US-04 | Invite a new member | UC-04 | Invite-only access; issue invite tokens (assumption) |
-| US-05 | View and update member profile | UC-05 | Member profiles |
-| US-06 | Browse, search, and filter active listings | UC-06 | Browse, search, and filter active listings |
-| US-07 | View listing details | UC-07 | View one listing's full details |
-| US-08 | Submit a request for an item | UC-08 | Submit a request for a specified quantity |
-| US-09 | View the request queue for a listing | UC-09 | Requests handled in the order received |
-| US-10 | Approve or deny the next request in the queue | UC-10 | Handle requests in order; no over-claim |
-| US-11 | Withdraw a queued request | UC-11 | Withdraw a pending request |
-| US-12 | Send and read messages in the exchange thread | UC-12 | Private message thread per exchange |
-| US-13 | Create a listing | UC-13 | Post listings with description, category, quantity, tags, and pickup window |
-| US-14 | Edit a listing | UC-14 | Edit own listings |
-| US-15 | Deactivate own listing | UC-15 | Deactivate own listings |
-| US-16 | Confirm pickup | UC-16 | Request lifecycle: APPROVED \-\> PICKED\_UP |
-| US-17 | Complete an exchange | UC-17 | Request lifecycle: PICKED\_UP \-\> COMPLETED |
-| US-18 | Leave a rating and review after completion | UC-18 | Ratings and reviews after a completed exchange |
-| US-19 | View reviews for a completed exchange | UC-19 | Reviews visible to exchange participants |
-| US-20 | View status notifications | UC-20 | In-app notifications for status changes |
-| US-21 | View my dashboard and activity overview | UC-21 | Personal dashboard of listings, requests, and history |
-| US-22 | Suspend a user | UC-22 | Admin: suspend users |
-| US-23 | Deactivate a listing as admin | UC-23 | Admin: deactivate listings without deleting audit history |
-| US-24 | Generate basic reports | UC-24 | Admin: generate basic reports |
-| US-25 | Add and manage listing photos | UC-13, UC-14 | Photo uploads on listings |
-
-## 4\. Assumptions and open questions
+## 3\. Assumptions and open questions
 
 These items are not yet approved by the team. Each one should be confirmed or changed before the requirements are locked. They are also noted inline in the affected stories.
 
