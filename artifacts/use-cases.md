@@ -8,10 +8,10 @@ The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
 ## 2\. Actors and Roles
 
-These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status. A listing's quantity available is the amount the Poster enters when creating the listing. The listing's remaining quantity starts equal to the quantity available and goes down as the Poster approves requests.
+These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given listing or request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status. A listing's quantity available is the amount the Poster enters when creating the listing. The listing's remaining quantity starts equal to the quantity available and goes down as the Poster approves requests. An exception flow may cover a situation that the preconditions say should not happen; this is for cases where the situation changed after the actor started, such as a listing that went inactive after the Member opened it. A suspended account cannot log in or take any member action; this rule applies in every use case, even when the use case does not list it as an exception flow.
 
 * **Guest**: a person who holds an invite token but has not registered yet. A Guest can only register.  
-* **Member**: a registered, active user. A Member can browse, search, and filter listings, manage a profile, post listings, submit requests, send messages, leave reviews, and view a personal dashboard.  
+* **Member**: a registered, active user. A Member can browse, search, and filter listings, manage a profile, invite new members, post listings, submit requests, send messages, leave reviews, view notifications, and view a personal dashboard.  
 * **Poster**: the Member who owns a listing. A Poster creates and manages listings, handles each listing's request queue, messages the recipient, and marks a picked-up exchange complete.  
 * **Recipient**: the Member who submits a request for an item from a listing and, if approved, picks it up and confirms pickup. The poster reaches the recipient through the message thread.  
 * **Admin**: a privileged user who can suspend users, deactivate listings without deleting audit history, and generate basic reports.
@@ -158,7 +158,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - Requested amount is more than the remaining quantity: the system rejects the request and creates no request.  
   - Requested amount is zero or negative: the system rejects it and shows a validation error.  
-  - The Recipient already has an open request on this listing: the system prevents a duplicate request.  
+  - The Recipient already has a pending request on this listing: the system prevents a duplicate request.  
 - Postconditions: A request exists with status REQUESTED, queued in the order it was received, and the Poster has been notified.  
 - Related user stories: US-08.
 
@@ -188,11 +188,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Main success flow:  
   1. The Poster opens the next pending request in the queue.  
   2. The Poster chooses to approve or deny it.  
-  3. If approving, the system checks that the approved quantity does not exceed the remaining quantity.  
+  3. If approving, the system checks that the requested quantity is not more than the remaining quantity.  
   4. The system sets the request status to APPROVED or DENIED and, when approving, reduces the remaining quantity.  
   5. The system notifies the Recipient.  
 - Alternate and exception flows:  
-  - Approving would push the approved quantity past the remaining quantity: the system rejects the approval, which is the conflict the queue prevents.  
+  - The requested quantity is more than the remaining quantity: the system rejects the approval, which is the conflict the queue prevents.  
   - A Member who does not own the listing tries to handle the request: the system denies access.  
   - The request is not in REQUESTED status: the system rejects the action.  
 - Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. DENIED is terminal.  
