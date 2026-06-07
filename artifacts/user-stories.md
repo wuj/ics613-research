@@ -2,9 +2,11 @@
 
 ## 1\. Introduction
 
-This document holds the user stories for the Local Produce Exchange. It is the companion to the team's use cases, the Team Charter, and project requirements. Each story names a user, the goal that user wants, and the benefit they get, followed by acceptance criteria. 
+This document holds the user stories for the Local Produce Exchange. It is the companion to the team's use cases, the [Team Charter](https://docs.google.com/document/d/1WJ6grlscXcbAA0KPX75DnDaX64iEsrVysQYG73Abf8M/edit?usp=sharing), and [project requirements](https://drive.google.com/drive/folders/127k1lPlnPjxJ5jwboM5rjCQiaw4ofL6E?usp=sharing). Each story names a user, the goal that user wants, and the benefit they get, followed by acceptance criteria. 
 
-Every story has a "Source use case(s)" so each one is traceable back to the use cases, which are in turn traceable back to the requirements and the charter. Each story is one distinct functionality. Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the \#questions Discord channel.
+Every user story has a "Source use case(s)" so each one is traceable back to the [use cases](https://docs.google.com/document/d/1Vv85cEQv3gqOVwdGKruyUFIG5JbMvrkS6dJ6XmsepWA/edit?usp=sharing), which are in turn traceable back to the requirements and the charter. *Each story is one distinct functionality.* 
+
+Note: [Edge cases and permission rules are captured as scenarios inside the relevant story, not as separate stories, per the discussions in the **\#questions Discord channel**.](https://discord.com/channels/1507300455020105768/1507301329671032832/1511902891257106653)
 
 ## 2\. The user stories
 
@@ -233,6 +235,39 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Photos are not part of the current listing detail view in this slice.
 
+#### US-30: View another member’s public profile
+
+- **Source use case:** UC-26 (View another member’s public profile)  
+- **Priority:** low  
+- **Actor:** member  
+- **Milestone:** Full Features (R2)
+
+**Story:** As a member, I want to view another member’s public profile and review history so that I can assess trustworthiness before requesting or approving an exchange
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the member is logged in  
+- When the member opens another member’s public profile  
+- Then the system shows that member’s display name and their review history
+
+*Scenario 2 \- edge / error path (own profile)*
+
+- Given the member opens their own profile through this view  
+- When the system loads the profile  
+- Then the system shows their own public profile the same way another member would see it.
+
+*Scenario 3 \- permission rule (not logged in)*
+
+- Given a guest who is not logged in attempts to view a member profile  
+- When the system receives the request  
+- Then the system denies access
+
+**Notes / open questions / assumptions**
+
+- Private exchange details are not shown in this view. 
+
 ### 2.3 Request queue
 
 #### US-08: Submit a request for an item
@@ -369,8 +404,8 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- A denial is final: the request cannot change status again.  
-- The poster handles requests in the order they are received.  
+- A denial is final: the request cannot change status again.   
+- The poster handles requests in the order they are received.   
 - Approve and deny are two outcomes of one decision, so they are scenarios in this one story, not separate stories.
 
 #### US-11: Withdraw a queued request
@@ -409,6 +444,43 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 **Notes / open questions / assumptions**
 
 - Only a pending request can be withdrawn.
+
+#### US-26: Cancel an approved request
+
+- **Source use case:** UC-11 (Withdraw a queued request)  
+- **Priority:** medium  
+- **Actor:** recipient  
+- **Milestone:** Follow up scope (R2)
+
+**Story:** As a recipient, I want to cancel a request that has been approved but not yet picked up, so that I can free up quantity for others if I no longer need the item
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the recipient owns a request with status APPROVED  
+- When the recipient cancels it  
+- The system sets the request to CANCELLED  
+- Restaurants the quantity back to the listing’s quantity   
+- And the poster is notified
+
+*Scenario 2 \- workflow rule (wrong status)*
+
+- Given the request is in terminal status PICKED\_UP, DENIED, CANCELLED  
+- When the recipient attempts to cancel it  
+- The system rejects the action   
+- Nothing changes
+
+*Scenario 3 \- permission rule (not the requester)*
+
+- Given a member who is not the requester for the request  
+- When that member attempts to cancel it  
+- The system denies the action  
+- Nothing changes
+
+**Notes / open questions / assumptions**
+
+- Restoring quantity on cancellation of an approved request should be confirmed with the team
 
 ### 2.4 Coordination
 
@@ -735,6 +807,36 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Email or SMS notifications are out of scope for this story set.
 
+#### US-28: Mark a notification as read
+
+- **Source use case:** UC-20   
+- **Priority:** low  
+- **Actor:** member  
+- **Milestone:** Full features (R2)
+
+**Story:** As a member, I want to mark a notification as read so that I can track which status changes I have already seen. 
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the member is logged in  
+- And the member has one or more unread notifications  
+- When the member opens an unread notification or marks it as read  
+- The system marks it as read  
+- And the system visually distinguishes between read/unread notifications
+
+*Scenario 2 \- edge / error path (already read)*
+
+- Given the member is already marked read  
+- When the user attempts to mark as read again  
+- Then the system accepts silently  
+- And nothing changes
+
+**Notes / open questions / assumptions**
+
+- Confirm whether notifications should be deleted or marked as read for system.
+
 #### US-21: View my dashboard and activity overview
 
 - **Source use case:** UC-21 (View my dashboard and activity overview)  
@@ -787,6 +889,32 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies the action  
 - And nothing changes
 
+#### US-27: Unsuspend a user
+
+- **Source use case:** UC-22 (Suspend a user)  
+- **Priority:** medium  
+- **Actor:** admin  
+- **Milestone:** Full features (R2)
+
+**Story:** As an admin, I want to unsuspend a member account so that a user who was incorrectly flagged or has taken steps to remediate behavior can have their account reinstated
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the admin is logged in with admin rights  
+- And the target account exists and is currently suspended  
+- When the admin reinstates the account  
+- Then the system marks the account as active  
+- And the account can then longer log in or take member actions
+
+*Scenario 2 \- permission rule (non-admin)*
+
+- Given a user without admin rights  
+- When that user attempts to unsuspend an account  
+- Then the system denies the action  
+- And nothing changes
+
 #### US-23: Deactivate a listing as admin
 
 - **Source use case:** UC-23 (Deactivate a listing as admin)  
@@ -836,6 +964,44 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Given a user without admin rights  
 - When that user attempts to generate a report  
 - Then the system denies the action
+
+#### US-29: View member profile as admin
+
+- **Source use case:** UC-25 (View member profile as admin)  
+- **Priority:** medium  
+- **Actor:** admin  
+- **Milestone:** Full features (R2)
+
+**Story:** As an admin, I want to search and view a member’s full account details so that I can find the right account before taking administrative action.
+
+**Acceptance criteria**
+
+*Scenario 1 \- normal / valid path*
+
+- Given the admin is logged in with admin rights  
+- When the admin searches for a member by name or email  
+- Then the system returns matching members with their account status  
+- And the admin can select a member to view their full account details and active/suspension status
+
+*Scenario 2 \- edge / error path (no matches)*
+
+- Given the admin searches for a member by name or email  
+- And no members match  
+- When the system processes the search  
+- The system shows an empty result 
+
+*Scenario 3 \- edge / error path (suspended account*
+
+- Given the admin selects a suspended account  
+- When the system loads the account details  
+- The system shows account details with suspended status  
+- And makes the reinstate action available
+
+*Scenario 4 \- permission rule (non-admin)*
+
+- Given a user without admin rights  
+- When that user attempts to access the member profile view  
+- The system denies access
 
 ### 2.10 Listing photos
 

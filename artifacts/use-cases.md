@@ -2,7 +2,7 @@
 
 ## 1\. Introduction
 
-This document is the high-level use cases for the Local Produce Exchange. It is based on the in-scope items from the Team Charter and project requirements. Each use case stays at a high level. Deeper detail is left to the user stories and their acceptance criteria, which are a different deliverable.
+This document is the high-level use cases for the Local Produce Exchange. It is based on the in-scope items from the [Team Charter](https://docs.google.com/document/d/1WJ6grlscXcbAA0KPX75DnDaX64iEsrVysQYG73Abf8M/edit?usp=sharing) and [project requirements](https://drive.google.com/drive/folders/127k1lPlnPjxJ5jwboM5rjCQiaw4ofL6E?usp=sharing). Each use case stays at a high level. Deeper detail is left to the [user stories and their acceptance criteria](https://docs.google.com/document/d/1ZZiL-ujy6XbVd1lqqkmUb2qtqRCFwK0HHG4bFtS1J6w/edit?usp=sharing), which are a different deliverable.
 
 The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
@@ -139,6 +139,22 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The listing is no longer active: the system tells the Member the listing is unavailable.  
 - Postconditions: The Member has seen the listing's full details.  
 - Related user stories: US-07.
+
+#### Use Case UC-26: View another member’s public profile
+
+- Primary actor: Member  
+- Supporting actors: System (returns the profile)  
+- Goal: See another member’s public profile and review history to assess trustworthiness before requesting/approving an exchange.  
+- Preconditions: The Member is logged in.  
+- Trigger: The Member selects another member’s profile.  
+- Main success flow:  
+  1. The Member selects another member’s profile.  
+  2. The system shows the member’s display name and review history.  
+- Alternate and exception flows:  
+  - A member attempts to access this view without being logged in: system denies access.  
+  - A member views their own profile: the system shows their own public profile the same way another member would see it.  
+- Postconditions: The Member has seen the member’s public profile and review history.  
+- Related user stories: US-30.
 
 ### 3.3 Request queue
 
@@ -451,6 +467,25 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A non-admin user tries to generate a report: the system denies the action.  
 - Postconditions: The Admin has seen the generated report.  
 - Related user stories: US-24.
+
+#### Use Case UC-25: View member profile as admin
+
+- Primary actor: Admin  
+- Supporting actors: System (returns full account details)  
+- Goal: View a member’s full account details in order to take administrative action such as suspending or reinstating the account.  
+- Preconditions: The Admin is logged in with admin rights.  
+- Trigger: The Admin searches for or selects a member account.  
+- Main success flow:  
+  1. The Admin searches for a member by name or email.  
+  2. The system returns matching members with their account status.  
+  3. The Admin selects a member.  
+  4. The system shows the member’s full account details, including account status, suspension history, and exchange history  
+- Alternate and exception flows:  
+  - No members match the search: system shows empty result/  
+  - Non-admin attempts to access view: system denies access  
+  - The Admin selects a suspended account: the system shows the account details with suspended status and makes the reinstate action available.  
+- Postconditions:The admin has seen the member’s full account details and can proceed to suspend or reinstate the account.  
+- Related user stories: US-29
 
 ## 4\. Assumptions and open questions
 
