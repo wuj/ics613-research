@@ -316,14 +316,14 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - When that member attempts to view the listing's queue  
 - Then the system denies access
 
-#### US-10: Approve or deny the next request in the queue
+#### US-10: Approve or deny a pending request
 
 - **Source use case:** UC-10 (Approve or deny the next request in the queue)  
 - **Priority:** high  
 - **Actor:** poster  
 - **Milestone:** Current scope (R1)
 
-**Story:** As a poster, I want to approve or deny a pending request on my listing so that I control who receives my items, in order, without conflicts.
+**Story:** As a poster, I want to approve or deny a pending request on my listing so that I control who receives my items without conflicts.
 
 **Acceptance criteria**
 
@@ -392,9 +392,9 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - And removes it from the queue  
 - And the poster is notified
 
-*Scenario 2 \- workflow rule (already handled)*
+*Scenario 2 \- workflow rule (not pending)*
 
-- Given the request has status APPROVED or DENIED  
+- Given the request is not in REQUESTED status  
 - When the recipient attempts to withdraw it  
 - Then the system rejects the withdrawal  
 - And nothing changes
@@ -635,7 +635,7 @@ Scenarios cover the normal path, and add edge or error and permission scenarios 
 - **Actor:** member  
 - **Milestone:** Full features (R2)
 
-**Story:** As a member who took part in a completed exchange, I want to leave a short rating and review of the other party so that the community can build trust.
+**Story:** As a member who took part in a completed exchange, I want to leave a short rating and review of the other party so that the two of us can build trust.
 
 **Acceptance criteria**
 
