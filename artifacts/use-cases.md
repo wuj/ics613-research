@@ -8,7 +8,7 @@ The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
 ## 2\. Actors and Roles
 
-These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status. A listing's quantity available is the amount the Poster enters when creating the listing. The listing's remaining quantity starts equal to the quantity available and goes down as the Poster approves requests. An exception flow may handle a state that the preconditions rule out; this covers the case where the state changed after the actor started, such as a listing that went inactive after the Member opened it.
+These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status. A listing's quantity available is the amount the Poster enters when creating the listing. The listing's remaining quantity starts equal to the quantity available and goes down as the Poster approves requests.
 
 * **Guest**: a person who holds an invite token but has not registered yet. A Guest can only register.  
 * **Member**: a registered, active user. A Member can browse, search, and filter listings, manage a profile, post listings, submit requests, send messages, leave reviews, and view a personal dashboard.  
@@ -28,11 +28,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Preconditions: The Guest holds an invite token. The token is valid and has not been used.  
 - Trigger: The Guest opens the registration page and submits account details with the token.  
 - Main success flow:  
-  1. The Guest opens the registration page.  
-  2. The Guest enters account details and the invite token.  
-  3. The system checks that the token is valid and unused.  
-  4. The system creates the member account.  
-  5. The system marks the token as used.  
+  - The Guest opens the registration page.  
+  - The Guest enters account details and the invite token.  
+  - The system checks that the token is valid and unused.  
+  - The system creates the member account.  
+  - The system marks the token as used.  
 - Alternate and exception flows:  
   - Token is invalid or already used: the system rejects registration and creates no account.  
   - Required account details are missing or malformed: the system rejects the submission and shows a validation error.  
@@ -81,9 +81,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Preconditions: The Member is logged in and active. (Assumption: a Member may issue invite tokens.)  
 - Trigger: The Member chooses to invite a new person.  
 - Main success flow:  
-  1. The Member chooses to create an invite.  
-  2. The system generates a new, unused invite token.  
-  3. The system shows the token so the Member can share it.  
+  - The Member chooses to create an invite.  
+  - The system generates a new, unused invite token.  
+  - The system shows the token so the Member can share it.  
 - Alternate and exception flows:  
   - The member is suspended: the system denies the action and creates no token.  
 - Postconditions: A new, unused invite token exists.  
