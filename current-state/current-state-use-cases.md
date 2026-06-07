@@ -338,7 +338,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 
 - Primary actor: Member (acting as the reviewer)  
 - Supporting actors: System (saves the review and makes it visible to the reviewed party)  
-- Goal: Leave a short rating and review of the other party after an exchange is completed, so the two parties can build trust through feedback on the exchange. (Open question: whether reviews should be visible beyond the two participants. See Section 4.)  
+- Goal: Leave a short rating and review of the other party after an exchange is completed, so the two parties can build trust through feedback on the exchange.  
 - Preconditions: The exchange has status COMPLETED. The Member is the Poster or the Recipient for that exchange and has not already reviewed the other party.  
 - Trigger: The Member chooses to leave a review for the completed exchange.  
 - Main success flow:  
@@ -459,9 +459,5 @@ The team has not yet approved the items below. Each must be reviewed and either 
 
 | ID | Type | Item | Affected use cases | Status |
 | :---- | :---- | :---- | :---- | :---- |
-| AS-01 | Assumption | Any active Member may issue invite tokens. | UC-04 | Open |
-| AS-02 | Assumption | The Poster handles requests in the order received. | UC-10 | Open |
-| AS-03 | Assumption | The Recipient is the party who confirms pickup. | UC-16 | Open |
-| AS-04 | Assumption | The Poster is the party who marks the exchange complete. | UC-17 | Open |
-| Q-01 | Question | Should reviews be visible to members beyond the two participants (for example, on member profiles)? The requirements give community trust as the motivation, but the acceptance criteria only make a review visible to the reviewed party. | UC-18, UC-19 | Open |
+|  |  |  |  |  |
 
