@@ -8,7 +8,7 @@ The roles used here are Guest, Member, Poster, Recipient, and Admin.
 
 ## 2\. Actors and Roles
 
-These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another.
+These are the roles the system defines. Poster and Recipient are not separate accounts. They are the role a Member plays for a given request. The same person can be a Poster on one listing and a Recipient on another. In this document, an exchange means a request together with the coordination around it, so a phrase like "the exchange has status COMPLETED" refers to that request's status.
 
 * Guest: a person who holds an invite token but has not registered yet. A Guest can only register.  
 * Member: a registered, active user. A Member can browse, search, and filter listings, manage a profile, post listings, submit requests, send messages, leave reviews, and view a personal dashboard.  
@@ -80,7 +80,7 @@ The use cases below are grouped by topic.
 - Primary actor: Member  
 - Supporting actors: System (creates the invite token)  
 - Goal: Create and share an invite token so a new person can register.  
-- Preconditions: The Member is logged in and active. (Assumption: a Member may issue invite tokens.)  
+- Preconditions: The Member is logged in and active. (Assumption: a Member may issue invite tokens. See Section 4.)  
 - Trigger: The Member chooses to invite a new person.  
 - Main success flow:  
   1. The Member chooses to create an invite.  
@@ -186,7 +186,7 @@ The use cases below are grouped by topic.
 - Primary actor: Poster  
 - Supporting actors: Recipient (the requester); System (checks quantity, updates status, notifies the Recipient)  
 - Goal: Handle a pending request on the Poster's listing by approving or denying it, keeping the queue order and preventing conflicts.  
-- Preconditions: The Poster owns the listing. At least one request has status REQUESTED. (Assumption: the Poster handles requests in the order received.)  
+- Preconditions: The Poster owns the listing. At least one request has status REQUESTED. (Assumption: the Poster handles requests in the order received. See Section 4.)  
 - Trigger: The Poster chooses to approve or deny a pending request.  
 - Main success flow:  
   1. The Poster opens the next pending request in the queue.  
@@ -212,12 +212,13 @@ The use cases below are grouped by topic.
   1. The Recipient opens their request.  
   2. The Recipient chooses to withdraw it.  
   3. The system sets the request status to CANCELLED and, if the request was still pending, removes it from the queue.  
-  4. The system notifies the Poster.  
+  4. If the request was approved, the system returns the approved quantity to the listing's remaining quantity.  
+  5. The system notifies the Poster.  
 - Alternate and exception flows:  
   - The request is already PICKED_UP or COMPLETED: the system rejects the withdrawal, because cancellation after pickup is not allowed.  
   - The request is already DENIED: the system rejects the withdrawal, because a denied request is closed.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
-- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, and the Poster has been notified.  
+- Postconditions: The request has status CANCELLED, which is terminal, it is no longer in the queue, the remaining quantity reflects any returned approval, and the Poster has been notified.  
 - Related user stories: TBD.
 
 ### 3.4 Coordination
@@ -494,5 +495,5 @@ The team has not yet approved the items below. Each must be reviewed and either 
 | A-03 | Assumption | The Recipient is the party who confirms pickup (APPROVED to PICKED_UP). | UC-16 | Proposed |
 | A-04 | Assumption | The Poster is the party who marks the exchange complete (PICKED_UP to COMPLETED). | UC-17 | Proposed |
 | Q-01 | Open question | Which basic report types the Admin can generate. Assumed at least an active-listing count and a completed-exchange count. | UC-24 | Open |
-| Q-02 | Open question | The project requirements call the requesting role the claimant. This document calls it the Recipient. The team should pick one name. | UC-08, UC-11, UC-12, UC-16, UC-18, UC-19 | Open |
+| Q-02 | Open question | The project requirements call the requesting role the claimant. This document calls it the Recipient. The team should pick one name. | UC-08, UC-10, UC-11, UC-12, UC-16, UC-18, UC-19 | Open |
 
