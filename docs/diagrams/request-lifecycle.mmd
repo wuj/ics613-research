@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    participant U as User / Browser
+    participant R as React HomePage
+    participant S as fetch service
+    participant V as Vite proxy :5173
+    participant K as uvicorn :8000
+    participant F as FastAPI router
+    participant P as Pydantic
+    participant O as SQLAlchemy
+    participant DB as PostgreSQL :5432
+
+    U->>R: click "Call backend API"
+    R->>S: sendSampleEndpointRequest(bodyText)
+    S->>V: POST /api/sample-endpoint, JSON, 3s timeout
+    V->>K: forward POST /api/sample-endpoint
+    K->>F: route to create_sample()
+    F->>P: validate request body
+    alt invalid body
+        P-->>F: ValidationError
+        F-->>K: 422 Unprocessable Entity
+    else valid body
+        P-->>F: SampleRequest foo, baz
+        F->>O: open session via get_db_session
+        O->>DB: SELECT from sample_data
+        DB-->>O: rows
+        O-->>F: SampleData list
+        F-->>K: 200 SampleResponse message, baz, sample_data
+    end
+    K-->>V: HTTP response
+    V-->>S: HTTP response
+    S->>S: parse JSON or handle timeout
+    S-->>R: SampleEndpointResult
+    R->>R: formatApiResult(ok, status, data)
+    R-->>U: render request and response boxes

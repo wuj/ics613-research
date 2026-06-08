@@ -1,0 +1,45 @@
+sequenceDiagram
+    autonumber
+    actor Dev as Developer
+    participant NPM as npm scripts
+    participant UV as uvicorn
+    participant Docs as Swagger UI
+    participant PG as PostgreSQL
+    participant PT as pytest
+    participant RF as ruff
+    participant Git as Git and CI
+
+    Note over Dev,PG: Bring up data and server
+    Dev->>NPM: npm run db:up
+    NPM->>PG: start container, wait until healthy
+    Dev->>NPM: npm run backend
+    NPM->>UV: uv run uvicorn app.main:app --reload
+
+    loop Inner loop: add an endpoint
+        Dev->>UV: add Pydantic schema in app/schemas/
+        Dev->>UV: add router in app/routers/
+        Dev->>UV: include router in app/main.py under /api
+        UV-->>UV: reload restarts on save
+        Dev->>Docs: try the endpoint at /docs
+        Docs->>UV: POST /api/...
+        UV->>PG: query via SQLAlchemy session
+        PG-->>UV: rows
+        UV-->>Docs: validated JSON response
+    end
+
+    Note over Dev,PT: Prove it with tests
+    Dev->>PT: add tests in backend/tests/ (in-memory SQLite)
+    Dev->>NPM: npm run test:backend
+    NPM->>PT: pytest, calls route functions directly
+    PT-->>Dev: pass or fail
+
+    Note over Dev,RF: Gate before commit
+    Dev->>NPM: npm run lint:backend
+    NPM->>RF: ruff check .
+    RF-->>Dev: pass or fail
+
+    Dev->>Git: commit, push, open PR
+    Git->>Git: Checks workflow: setup, lint, build, test
+    Git-->>Dev: green check or failure
+
+    Note over Dev,PG: Changing models? Use the database workflow

@@ -1,0 +1,42 @@
+sequenceDiagram
+    autonumber
+    actor Dev as Developer
+    participant NPM as npm scripts
+    participant Vite as Vite dev server
+    participant Br as Browser
+    participant API as Backend API
+    participant VT as Vitest
+    participant QA as tsc and eslint
+    participant Git as Git and CI
+
+    Note over Dev,API: Start the stack once per session
+    Dev->>NPM: npm run db:up
+    Dev->>NPM: npm run backend
+    Dev->>NPM: npm run frontend
+    NPM->>Vite: start dev server (HMR and /api proxy)
+    Vite-->>Br: serve app at 127.0.0.1:5173
+
+    loop Inner loop: edit and see
+        Dev->>Vite: edit .tsx / .ts / .scss in src/
+        Vite-->>Br: hot module replacement, no full reload
+        Br->>API: fetch /api/... through the proxy
+        API-->>Br: JSON response
+        Dev->>Br: check the result on screen
+    end
+
+    Note over Dev,VT: Prove it with tests
+    Dev->>VT: add .test.tsx / .test.ts (RTL and jsdom, stub fetch)
+    Dev->>NPM: npm run test:frontend
+    NPM->>VT: vitest run
+    VT-->>Dev: pass or fail
+
+    Note over Dev,QA: Gate before commit
+    Dev->>NPM: npm run typecheck
+    Dev->>NPM: npm run lint:frontend
+    Dev->>NPM: npm run build
+    NPM->>QA: tsc -b, eslint, vite build
+    QA-->>Dev: pass or fail
+
+    Dev->>Git: commit, push, open PR
+    Git->>Git: Checks workflow: setup, lint, build, test
+    Git-->>Dev: green check or failure

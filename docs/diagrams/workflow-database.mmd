@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    actor Dev as Developer
+    participant NPM as npm scripts
+    participant Mod as SQLAlchemy models
+    participant AL as Alembic
+    participant PG as PostgreSQL
+    participant Seed as seed.py
+    participant PT as pytest
+    participant Team as Git and teammates
+
+    Note over Dev,PG: PostgreSQL must be running
+    Dev->>NPM: npm run db:up
+    NPM->>PG: start container, wait until healthy
+
+    Dev->>Mod: add or edit model in app/models/
+    Dev->>Mod: register module in app/models/__init__.py
+
+    Dev->>NPM: npm run db:revision -- "describe the change"
+    NPM->>AL: alembic revision --autogenerate
+    AL->>Mod: read Base.metadata
+    AL->>PG: compare against current schema
+    AL-->>Dev: new file in migrations/versions/, ruff-formatted
+
+    Note over Dev,AL: Always read the generated migration
+    Dev->>AL: review upgrade() and downgrade()
+
+    Dev->>NPM: npm run db:migrate
+    NPM->>AL: alembic upgrade head
+    AL->>PG: apply schema change
+    AL->>PG: record revision in alembic_version
+
+    opt Demo data changed
+        Dev->>Seed: update seed.py
+        Dev->>NPM: npm run db:seed
+        NPM->>PG: insert demo rows if table is empty
+    end
+
+    Dev->>PT: update tests (schema built from models)
+    Dev->>NPM: npm run test:backend
+    PT-->>Dev: pass or fail
+
+    Dev->>Team: commit model and migration together, push, PR
+    Note over Team: Teammates run npm run db:migrate after pulling

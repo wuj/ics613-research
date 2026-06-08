@@ -1,0 +1,97 @@
+flowchart TB
+    subgraph ORCH["Orchestration: npm scripts (root package.json, no deps)"]
+        direction TB
+        NPM["npm run ...<br/>setup | frontend | backend | db | db:migrate<br/>db:seed | lint | typecheck | test | build"]
+        UV["Astral uv<br/>uv sync / uv run, uv.lock, Python 3.14"]
+        DCMP["docker compose"]
+    end
+
+    subgraph BROWSER["Browser (client)"]
+        direction TB
+        REACT["React 19 + TypeScript<br/>main.tsx -> App.tsx"]
+        ROUTER["react-router v7<br/>/ -> HomePage, /about -> AboutPage"]
+        SVC["services/sampleEndpointService.ts<br/>fetch POST /api/sample-endpoint<br/>3000 ms AbortSignal timeout"]
+        UTIL["utils/formatApiResult.ts"]
+        SCSS["styles/global.scss (Sass)"]
+        REACT --> ROUTER
+        ROUTER --> SVC
+        REACT --> UTIL
+        REACT --> SCSS
+    end
+
+    subgraph VITE["Vite 8 dev server, 127.0.0.1:5173"]
+        direction TB
+        VITEDEV["@vitejs/plugin-react<br/>HMR + TS/JSX transform"]
+        PROXY["server.proxy<br/>/api -> http://127.0.0.1:8000"]
+    end
+
+    subgraph BACK["Backend: uvicorn ASGI, 127.0.0.1:8000"]
+        direction TB
+        UVICORN["uvicorn<br/>app.main:app --reload"]
+        FASTAPI["FastAPI app<br/>routers mounted under /api"]
+        HEALTH["routers/health.py<br/>GET /api/health"]
+        SAMPLE["routers/sample_endpoint.py<br/>POST /api/sample-endpoint"]
+        PYD["Pydantic v2 schemas<br/>SampleRequest / SampleResponse"]
+        DEP["get_db_session() dependency"]
+        ORM["SQLAlchemy 2.0 ORM<br/>SampleData model, SessionLocal"]
+        DRIVER["psycopg 3<br/>postgresql+psycopg"]
+        UVICORN --> FASTAPI
+        FASTAPI --> HEALTH
+        FASTAPI --> SAMPLE
+        SAMPLE --> PYD
+        SAMPLE --> DEP
+        DEP --> ORM
+        ORM --> DRIVER
+    end
+
+    subgraph DB["Database (Docker)"]
+        direction TB
+        PG["PostgreSQL 18.4<br/>127.0.0.1:5432<br/>volume produce_db_data"]
+        TBL["table sample_data<br/>id, slug unique, name, note"]
+        PG --> TBL
+    end
+
+    subgraph MIG["Schema + seed tooling"]
+        direction TB
+        ALEMBIC["Alembic 1.16<br/>env.py uses Base.metadata<br/>rev cd9306b0de55: create sample_data"]
+        SEED["app/seed.py<br/>inserts 3 demo rows, idempotent"]
+    end
+
+    subgraph QUAL["Quality + test tooling"]
+        direction TB
+        VITEST["Vitest 4 + Testing Library + jsdom<br/>page / service / util tests"]
+        PYTEST["pytest 9<br/>test_db, test_sample_endpoint, test_seed<br/>in-memory SQLite"]
+        RUFF["ruff (backend lint)"]
+        ESLINT["eslint (frontend lint)"]
+        TSC["TypeScript tsc -b (typecheck + build)"]
+    end
+
+    subgraph CI["GitHub Actions: .github/workflows/unit-tests.yml (Checks)"]
+        direction TB
+        TRIG["on: pull_request, push to main, workflow_dispatch<br/>ubuntu-latest, Node 22, uv 8.2.0"]
+        STEPS["npm run setup -> lint -> build -> test"]
+        TRIG --> STEPS
+    end
+
+    SVC -->|"HTTP /api/*"| PROXY
+    PROXY -->|"forward to :8000"| UVICORN
+    DRIVER -->|"SQL over TCP 5432"| PG
+
+    NPM --> VITEDEV
+    NPM --> UV
+    NPM --> DCMP
+    UV --> UVICORN
+    UV --> ALEMBIC
+    UV --> SEED
+    DCMP --> PG
+    ALEMBIC -->|"upgrade head"| PG
+    SEED -->|"insert rows"| PG
+
+    NPM --> VITEST
+    NPM --> PYTEST
+    NPM --> RUFF
+    NPM --> ESLINT
+    NPM --> TSC
+    STEPS --> NPM
+    VITEST -.-> REACT
+    PYTEST -.-> FASTAPI
