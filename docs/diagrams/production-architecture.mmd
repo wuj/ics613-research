@@ -1,0 +1,108 @@
+flowchart TB
+    subgraph ORCH["Orchestration: systemd + Docker Compose + uv, driven by the deploy script (no npm on the server)"]
+        direction TB
+        SYSTEMD["systemd<br/>produce-backend.service<br/>Restart=always, starts on boot, user deploy"]
+        UV["Astral uv<br/>uv sync --locked --no-dev, Python 3.14.2 venv"]
+        DCMP["docker compose<br/>+ docker-compose.override.yml"]
+    end
+
+    subgraph BROWSER["Browser (client): same app, built bundle"]
+        direction TB
+        REACT["React 19 + TypeScript<br/>main.tsx -> App.tsx"]
+        ROUTER["react-router v7<br/>/ -> HomePage, /about -> AboutPage"]
+        SVC["services/sampleEndpointService.ts<br/>fetch POST /api/sample-endpoint<br/>3000 ms AbortSignal timeout"]
+        UTIL["utils/formatApiResult.ts"]
+        SCSS["styles/global.scss (Sass)"]
+        REACT --> ROUTER
+        ROUTER --> SVC
+        REACT --> UTIL
+        REACT --> SCSS
+    end
+
+    subgraph WEB["nginx 1.26 host package, public :80 and :443 (replaces the Vite dev server)"]
+        direction TB
+        NGINXTLS["TLS termination<br/>:443 http2, :80 -> 301 https<br/>cert /etc/ssl/produce/fullchain.pem"]
+        NGINXSERVE["serves frontend/dist<br/>SPA fallback to index.html<br/>gzip + security headers"]
+        NGINXPROXY["location /api<br/>proxy to 127.0.0.1:8000"]
+        NGINXTLS --> NGINXSERVE
+        NGINXTLS --> NGINXPROXY
+    end
+
+    subgraph BACK["Backend: uvicorn under systemd, 127.0.0.1:8000, behind nginx"]
+        direction TB
+        UVICORN["uvicorn app.main:app<br/>1 worker, no --reload, --proxy-headers"]
+        FASTAPI["FastAPI app<br/>routers mounted under /api"]
+        HEALTH["routers/health.py<br/>GET /api/health"]
+        SAMPLE["routers/sample_endpoint.py<br/>POST /api/sample-endpoint"]
+        PYD["Pydantic v2 schemas<br/>SampleRequest / SampleResponse"]
+        DEP["get_db_session() dependency"]
+        ORM["SQLAlchemy 2.0 ORM<br/>SampleData model, SessionLocal"]
+        DRIVER["psycopg 3<br/>postgresql+psycopg"]
+        UVICORN --> FASTAPI
+        FASTAPI --> HEALTH
+        FASTAPI --> SAMPLE
+        SAMPLE --> PYD
+        SAMPLE --> DEP
+        DEP --> ORM
+        ORM --> DRIVER
+    end
+
+    subgraph DB["Database (Docker)"]
+        direction TB
+        PG["PostgreSQL 18.4 (container app-db-1)<br/>127.0.0.1:5432<br/>volume produce_db_data<br/>restart: unless-stopped"]
+        TBL["table sample_data<br/>id, slug unique, name, note"]
+        PG --> TBL
+    end
+
+    subgraph MIG["Schema + seed tooling (run by the deploy script on every deploy)"]
+        direction TB
+        ALEMBIC["Alembic 1.16<br/>alembic upgrade head"]
+        SEED["app/seed.py<br/>inserts 3 demo rows, idempotent"]
+    end
+
+    subgraph QUAL["Quality + test tooling (runs in CI only; uv sync --no-dev skips pytest/ruff on the server)"]
+        direction TB
+        VITEST["Vitest 4 + Testing Library + jsdom"]
+        PYTEST["pytest 9 (in-memory SQLite)"]
+        RUFF["ruff (backend lint)"]
+        ESLINT["eslint (frontend lint)"]
+        TSC["TypeScript tsc -b (typecheck + build)"]
+    end
+
+    subgraph CI["GitHub Actions: adds Deploy on top of the Checks workflow"]
+        direction TB
+        REPO["repo ICS613-Team4/local-produce-exchange<br/>on: merge to main"]
+        CHECKS["Checks (unit-tests.yml)<br/>npm run setup -> lint -> build -> test"]
+        DEPLOYJOB["Deploy (deploy.yml)<br/>build frontend, rsync over SSH,<br/>run deploy-remote.sh"]
+        REPO --> CHECKS
+        CHECKS --> DEPLOYJOB
+    end
+
+    %% runtime request path
+    SVC -->|"HTTPS /api/* :443"| NGINXTLS
+    NGINXPROXY -->|"forward to :8000"| UVICORN
+    NGINXSERVE -->|"built bundle"| REACT
+    DRIVER -->|"SQL over TCP 5432"| PG
+
+    %% supervision and orchestration
+    SYSTEMD -.-> UVICORN
+    UV -.-> UVICORN
+    DCMP -.-> PG
+
+    %% schema and seed
+    ALEMBIC -.->|"upgrade head"| PG
+    SEED -.->|"insert rows"| PG
+
+    %% delivery
+    DEPLOYJOB -.->|"rsync backend, scripts, compose"| BACK
+    DEPLOYJOB -.->|"rsync frontend/dist"| NGINXSERVE
+    DEPLOYJOB -.->|"ssh runs deploy-remote.sh"| MIG
+    DEPLOYJOB -.->|"systemctl restart"| SYSTEMD
+    VITEST -.-> CHECKS
+    PYTEST -.-> CHECKS
+    RUFF -.-> CHECKS
+    ESLINT -.-> CHECKS
+    TSC -.-> CHECKS
+
+    classDef diff fill:#fde68a,stroke:#b45309,stroke-width:2px;
+    class SYSTEMD,UV,DCMP,NGINXTLS,NGINXSERVE,NGINXPROXY,UVICORN,PG,ALEMBIC,SEED,DEPLOYJOB diff

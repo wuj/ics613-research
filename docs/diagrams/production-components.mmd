@@ -1,0 +1,33 @@
+flowchart TB
+    ENDUSER["End user"]
+    BROWSER["Browser<br/>https://localharvest.exchange"]
+
+    DEVELOPER["Developer"]
+    GH["GitHub repo<br/>ICS613-Team4/local-produce-exchange"]
+
+    subgraph GHA["GitHub Actions (runs on merge to main)"]
+        direction TB
+        LINT["lint<br/>eslint + ruff"]
+        BUILD["build<br/>tsc typecheck + vite bundle"]
+        TEST["test<br/>vitest + pytest"]
+        DEPLOY["deploy<br/>rsync over SSH + deploy-remote.sh<br/>(migrate, restart, health-check)"]
+        LINT --> BUILD --> TEST --> DEPLOY
+    end
+
+    subgraph VPS["Production VPS (Vultr, Debian 13, 45.77.209.138)"]
+        NGINX["nginx 1.26 (host package)<br/>TLS on :443, :80 -> 301 https<br/>serves frontend/dist with SPA fallback<br/>proxies /api to 127.0.0.1:8000"]
+        BACKEND["produce-backend.service (systemd)<br/>uvicorn, 1 worker, 127.0.0.1:8000<br/>FastAPI + Pydantic + SQLAlchemy<br/>Python 3.14 venv, runs as deploy user"]
+        subgraph DOCKER["Docker"]
+            PG["PostgreSQL 18.4 container<br/>127.0.0.1:5432 only<br/>volume produce_db_data<br/>restart: unless-stopped"]
+        end
+    end
+
+    ENDUSER -->|"opens"| BROWSER
+    BROWSER -->|"HTTPS :443"| NGINX
+    NGINX -->|"static files"| BROWSER
+    NGINX -->|"/api to :8000"| BACKEND
+    BACKEND -->|"SQL over TCP 5432"| PG
+
+    DEVELOPER -->|"opens a pull request"| GH
+    GH -->|"merge to main"| GHA
+    DEPLOY -.->|"to the VPS over SSH"| VPS

@@ -1,0 +1,36 @@
+flowchart TB
+    DEVELOPER["Developer"]
+    BROWSER["Browser"]
+
+    subgraph DEV["Frontend dev server :5173"]
+        REACT["React 19 + TypeScript<br/>pages, services, router"]
+        VITE["Vite<br/>transforms, serves, HMR<br/>/api proxy to :8000"]
+        REACT -->|"fetch /api/*"| VITE
+    end
+
+    subgraph BACKEND["Backend (uvicorn :8000)"]
+        FASTAPI["FastAPI routers<br/>under /api"]
+        PYDANTIC["Pydantic<br/>validate request/response"]
+        ORM["SQLAlchemy ORM<br/>+ psycopg driver"]
+        FASTAPI --> PYDANTIC
+        FASTAPI --> ORM
+    end
+
+    subgraph DATA["Database (Docker :5432)"]
+        PG["PostgreSQL 18.4"]
+    end
+
+    NPM["npm scripts<br/>(single entry point)"]
+    ALEMBIC["Alembic migrations"]
+
+    DEVELOPER -->|"runs npm targets"| NPM
+    DEVELOPER -->|"opens"| BROWSER
+    BROWSER -->|"loads and runs"| REACT
+    VITE -->|"forward /api"| FASTAPI
+    ORM -->|"SQL over TCP 5432"| PG
+
+    NPM --> VITE
+    NPM --> FASTAPI
+    NPM --> PG
+    NPM --> ALEMBIC
+    ALEMBIC -.->|"upgrade schema"| PG
