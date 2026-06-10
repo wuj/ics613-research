@@ -60,8 +60,8 @@ partway through never shows a new UI against a backend that is not ready.
 
 - Host: Vultr, 45.77.209.138, Debian 13, 961MB RAM plus 3GB swap, 23GB
   disk.
-- Admin login: `ssh vps2` (an alias in `C:\Users\jeffr\.ssh\config`, user
-  `jeff`, with passwordless sudo).
+- Admin login: `ssh vps2`, an SSH config alias on the admin machine that
+  connects as the server's admin user with passwordless sudo.
 - App directory: `/opt/produce-exchange/app`, owned by the `deploy` user.
 - Domain: `localharvest.exchange` (covers the apex and `www`).
 
@@ -198,19 +198,80 @@ database, recreate the volume first:
     ssh vps2 "cd /opt/produce-exchange/app && sudo docker compose down --volumes && sudo docker compose up -d --wait db"
     ssh vps2 "cd /opt/produce-exchange/app && sudo docker compose exec -T db psql -U produce -d produce_exchange" < backup-FILE.sql
 
-The `sudo` is needed because `ssh vps2` logs in as `jeff`, who is not in
-the docker group. Keep the .sql files on the admin machine, not the
+The `sudo` is needed because `ssh vps2` logs in as the admin user, who is
+not in the docker group. Keep the .sql files on the admin machine, not the
 server. The dump includes Alembic's `alembic_version` table, so a restored
 database remembers which migrations it already has, and the next deploy
 applies only newer ones. After an empty-volume restore, the next deploy's
 seed step sees rows and skips itself.
+
+## Automated database backups
+
+A systemd timer takes a database backup once a day, so the data is not left
+to hand-run dumps alone. The pieces:
+
+- Backup directory: `/opt/produce-exchange/backups/`, mode 750, owned by
+  `deploy:deploy`. It is a sibling of `app/`, so the deploy rsync (which
+  only reaches inside `backend/` and `scripts/`) never touches it.
+- Backup script: `/opt/produce-exchange/backup-db.sh`, run as the `deploy`
+  user. It runs `pg_dump` on the one database, compresses the result with
+  gzip, and writes a timestamped file named
+  `produce_exchange-YYYYmmdd-HHMMSS.sql.gz`. The script writes to a `.tmp`
+  file first and checks that the dump is non-empty and passes `gzip -t`
+  before giving it the final name, so a crashed dump never leaves a
+  half-written file that looks like a good backup. It then deletes dumps
+  older than 30 days.
+- systemd units: `produce-db-backup.service` (a oneshot that runs the
+  script as `deploy` with the `docker` group added) and
+  `produce-db-backup.timer` (fires daily at 03:30 UTC, a low-traffic time).
+  The timer has `Persistent=true`, so a backup missed while the box was off
+  runs at the next boot. No sudoers change was needed: the service runs as
+  `deploy`, which is already in the `docker` group.
+
+This protects against logical loss such as a bad migration or an accidental
+delete, where you restore from a recent dump. It does not protect against
+losing the whole VPS or its disk, because the backups live on the same
+server; an off-box copy was left out on purpose to keep this simple.
+
+The dump files are readable only by the `deploy` user (the directory is
+mode 750 and each file is mode 600), so admin commands that read them use
+`sudo` or `sudo -u deploy`.
+
+### List the backups on the server
+
+    ssh vps2 "sudo -u deploy ls -la /opt/produce-exchange/backups"
+
+### Check the timer
+
+    ssh vps2 "systemctl list-timers produce-db-backup.timer --all"
+    ssh vps2 "sudo journalctl -u produce-db-backup.service"
+
+The first command shows the next and last run times. The second shows the
+one-line summary each run prints (the file it wrote, how many backups are
+on disk, and the free space).
+
+### Restore one of these dumps
+
+These backups are gzip-compressed, so the restore unzips on the way in.
+Run the remote command under `bash -o pipefail` so a failed `gunzip` is not
+hidden by a later command in the pipe, and pass `ON_ERROR_STOP=1` to `psql`
+so the restore stops on the first SQL error. The `sudo` before `gunzip`
+reads the mode-750 backup directory; the `sudo` before `docker` is needed
+because the SSH login is the admin user, not `deploy`:
+
+    ssh vps2 "bash -o pipefail -c 'cd /opt/produce-exchange/app && sudo gunzip -c /opt/produce-exchange/backups/produce_exchange-YYYYmmdd-HHMMSS.sql.gz | sudo docker compose exec -T db psql -v ON_ERROR_STOP=1 -U produce -d produce_exchange'"
+
+For a clean restore, recreate the volume first (`down --volumes`, then
+`up -d --wait db`), the same as the manual section above. The dump includes
+the `alembic_version` table, so a restored database remembers its migration
+state and the next deploy applies only newer migrations.
 
 ## Database password rotation
 
 The postgres image reads `.env` only when it first creates an empty data
 volume. After that the password lives inside the volume, so editing `.env`
 by itself makes the backend and the database disagree and login fails.
-Rotate in this order (as `jeff`):
+Rotate in this order (as the admin user):
 
 1. Change it in the database:
 
@@ -223,11 +284,11 @@ Rotate in this order (as `jeff`):
 
 ## Certificate rotation
 
-The certificate expires 2026-12-21. With the new issued files in
-`C:\Users\jeffr\MCS\ics613\ssl\`:
+The certificate expires 2026-12-21. With the new issued files saved in a
+local `ssl` folder, run these from the folder that contains it:
 
-    scp C:\Users\jeffr\MCS\ics613\ssl\localharvest_exchange.crt vps2:/tmp/
-    scp C:\Users\jeffr\MCS\ics613\ssl\localharvest_exchange.ca-bundle vps2:/tmp/
+    scp ssl\localharvest_exchange.crt vps2:/tmp/
+    scp ssl\localharvest_exchange.ca-bundle vps2:/tmp/
     ssh vps2 "sudo install -m 644 /tmp/localharvest_exchange.crt /etc/ssl/produce/ && sudo install -m 644 /tmp/localharvest_exchange.ca-bundle /etc/ssl/produce/ && sudo sh -c 'cat /etc/ssl/produce/localharvest_exchange.crt /etc/ssl/produce/localharvest_exchange.ca-bundle > /etc/ssl/produce/fullchain.pem' && sudo chmod 644 /etc/ssl/produce/fullchain.pem && rm /tmp/localharvest_exchange.crt /tmp/localharvest_exchange.ca-bundle && sudo nginx -t && sudo systemctl reload nginx"
 
 The private key only changes if a new CSR was generated. Reusing the
