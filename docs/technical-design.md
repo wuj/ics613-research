@@ -4,7 +4,7 @@ This is the technical design document for the Team 4 project "Surplus: A Local
 Produce Exchange"
 ([github.com/ICS613-Team4/local-produce-exchange](https://github.com/ICS613-Team4/local-produce-exchange)).
 It covers six
-things: the architecture diagram and its components, the technology stack, the
+areas: the architecture diagram and its components, the technology stack, the
 code quality tools, the data model, the key API endpoints, and the risks and
 tradeoffs.
 
@@ -27,7 +27,7 @@ Surplus is a web application split into three tiers:
   itself instead of asking the server for a fresh page on every click.
 - **Backend (answers HTTP requests).** It is a separate program that the frontend
   talks to over a single contract: any URL beginning with `/api` goes to the
-  backend, and everything else is the frontend.
+  backend, and all other paths are handled by the frontend.
 - **Database (stores the data).** It sits behind the backend; only the backend
   talks to it, never the browser.
 
@@ -58,15 +58,15 @@ orchestration, the React and TypeScript frontend served by Vite, the
 FastAPI/uvicorn backend, PostgreSQL in Docker, the Alembic and seed tooling, the
 test and lint tools, and the GitHub Actions checks.
 
-![Surplus end-to-end architecture: npm orchestration, React/Vite frontend, FastAPI/uvicorn backend, PostgreSQL, and GitHub Actions](diagrams/static-dev-architecture.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1gFFBsc1QzX-vqAP2mfNfXmaH5YGYjbtK/view?usp=sharing)
 
 ### Detailed static prod architecture view
 
 This mirrors the dev view layer for layer, with the same eight groups
 (orchestration, browser, the web tier, backend, database, schema and seed
 tooling, quality and test tooling, and GitHub Actions). The amber boxes are the
-only parts that differ from development; everything else is the same code in the
-same shape.
+only parts that differ from development; the remaining parts use the same code in
+the same shape.
 
 What differs in production:
 
@@ -91,16 +91,16 @@ What differs in production:
 Solid arrows are the live request path; dotted arrows are supervision, schema and
 seed, and delivery.
 
-![Production end-to-end architecture mirroring the dev view, with the parts that differ highlighted: nginx replaces the Vite dev server (TLS, serves the built frontend, proxies /api); uvicorn runs under systemd with one worker and no reload; PostgreSQL adds a restart policy; the deploy script runs Alembic and the seeder; quality tooling runs in CI only; and GitHub Actions adds a Deploy workflow](diagrams/static-prod-architecture.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1R4rC1VClGXa1NNED0bRicdZ7A3ldQ3Nc/view?usp=sharing)
 
 ### Application runtime request path
 
 This traces one request from a button click in the browser all the way to a
-database row and back. The diagram is a sequence diagram, read top to bottom:
+database row and back. The linked diagram is a sequence diagram, read top to bottom:
 each vertical line is one participant, and each arrow is one message in time
 order.
 
-![Request lifecycle: button click through Vite proxy, FastAPI, Pydantic validation, SQLAlchemy, and PostgreSQL, then back to the rendered response](diagrams/request-lifecycle.svg)
+[(Link to diagram)](https://drive.google.com/file/d/19laWQKs7il8bxw8JzNsONFuDQxb3-G4c/view?usp=sharing)
 
 #### How it works, step by step
 
@@ -123,7 +123,8 @@ setup; production takes the same path, with nginx in place of the Vite proxy.
    same origin it was served from.
 
 4. **Vite proxies the call to the backend.** In development the page is served by
-   the Vite dev server on port 5173. Vite is configured to forward anything
+   the Vite dev server, which uses port 5173 by default unless that port is
+   unavailable or the config changes. Vite is configured to forward anything
    starting with `/api` to the FastAPI backend on port 8000. This is why the
    frontend code needs no host name and no CORS setup: as far as the browser
    knows, it is talking to one server, and Vite relays the call across to
@@ -150,8 +151,8 @@ setup; production takes the same path, with nginx in place of the Vite proxy.
    session per request, and the framework manages its open-use-close lifecycle.
 
 8. **SQLAlchemy reads the data.** Using that session, SQLAlchemy runs a
-   `SELECT` against the `sample_data` table. PostgreSQL returns the matching
-   rows, and SQLAlchemy turns them back into a list of Python `SampleData`
+   `SELECT` against the `sample_data` table. PostgreSQL returns all rows, and
+   SQLAlchemy turns them back into a list of Python `SampleData`
    objects so the route works with objects, not raw SQL result rows.
 
 9. **The route builds the response.** The route packs the result into a
@@ -195,31 +196,33 @@ Each part of the development setup has a clear job and a clear boundary.
   response. All routes live under the `/api` prefix, which is the contract the
   frontend relies on.
 
-- **Data.** PostgreSQL 18.4 stores the data. SQLAlchemy 2.0 is the ORM that maps
-  Python classes to tables, and psycopg 3 is the database driver underneath.
+- **Data.** PostgreSQL 18.4 stores the data. SQLAlchemy 2.0.50 is the ORM that maps
+  Python classes to tables, and psycopg 3.3.4 is the database driver underneath.
   Alembic manages schema changes as versioned migration files.
 
 - **Quality and CI.** pytest tests the backend (against an in-memory SQLite
   database, so no Docker is needed for tests). ruff and eslint lint the two
-  languages. GitHub Actions runs lint, build, and test on every pull request,
-  then deploys to the VPS on pushes to `main`.
+  languages. GitHub Actions runs lint, build, and test on every pull request. On
+  pushes to `main`, the Deploy workflow reruns those checks before it deploys to
+  the VPS.
 
 The connecting idea: npm is the single entry point, and `/api` is the contract
 between the frontend and the backend. During development, the Vite dev server
-(port 5173) proxies every `/api` request to the FastAPI backend (port 8000), so
-the browser sees one origin and no CORS setup is needed.
+(normally port 5173 by default) proxies every `/api` request to the FastAPI
+backend (port 8000), so the browser sees one origin and no CORS setup is needed.
 
 #### Local development architecture
 
-This diagram is the simpler companion to the detailed static dev architecture
-view above. It shows the main components and how they connect: solid arrows are
+This linked diagram is the simpler companion to the detailed static dev
+architecture view above. It shows the main components and how they connect:
+solid arrows are
 the live
 request path, and dotted arrows are tooling that acts on a component rather than
 serving traffic.
 
-![Component relationships in development: the developer runs npm targets that start the Vite dev server, the backend, and the database; the Vite dev server hosts the React and TypeScript app, which the browser loads and runs; the app's /api calls go through the Vite proxy to FastAPI, which validates with Pydantic and reads through SQLAlchemy into PostgreSQL; Alembic migrates the schema](diagrams/local-development-architecture.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1eUTJaRMSIfOOKmGoHIPPSfkbgQBQyNOO/view?usp=sharing)
 
-Reading the diagram: the developer runs the npm targets, which start the Vite dev
+Reading the linked diagram: the developer runs the npm targets, which start the Vite dev
 server, the backend, and the database (and drive Alembic for schema changes). The
 Vite dev server hosts the React and TypeScript app and serves it to the browser
 the developer opens, where the app runs. A click in the app makes an `/api` call
@@ -231,7 +234,7 @@ appears in the production view below.
 
 ### Production components
 
-The components and the relationships diagram above describe the development
+The components and the linked relationships diagram describe the development
 setup, the one a developer runs on their own machine. Production runs the same
 application code, but different programs serve it and keep it running. This is the
 live system at https://localharvest.exchange, hosted on one VPS (a rented Linux
@@ -256,11 +259,11 @@ server: Vultr, Debian 13, at 45.77.209.138).
   server is running.
 
 - **Database (PostgreSQL in Docker).** The same PostgreSQL 18.4 image as
-  development, started by Docker Compose. It is bound to `127.0.0.1:5432` only, so
-  nothing off the server can connect to it. Its data lives in a named Docker
-  volume (`produce_db_data`) that survives container restarts, and a VPS-only
-  override file adds `restart: unless-stopped` so the container comes back by
-  itself after a reboot.
+  development, started by Docker Compose. The Compose file publishes it to
+  `127.0.0.1` only, with host port 5432 by default, so nothing off the server can
+  connect to it. Its data lives in a named Docker volume (`produce_db_data`) that
+  survives container restarts, and a VPS-only override file adds
+  `restart: unless-stopped` so the container comes back by itself after a reboot.
 
 - **Database backups.** A systemd timer (`produce-db-backup.timer`) takes a
   compressed `pg_dump` of the database every 6 hours (00:00, 06:00, 12:00, and
@@ -268,12 +271,14 @@ server: Vultr, Debian 13, at 45.77.209.138).
   days by file age. The dumps live on the same VPS, which protects against
   logical loss (a bad migration or an accidental delete) but not against losing
   the server itself; an off-box copy is a planned extension. The full setup and
-  restore steps are in `database-backup-and-restore.md`.
+  restore steps are in the database backup and restore guide.
 
-- **App files and secrets.** Everything lives under `/opt/produce-exchange/app`
+- **App files and secrets.** The app files live under `/opt/produce-exchange/app`
   (the `backend` folder, the built `frontend/dist`, the deploy `scripts`, and the
-  Compose files). The real database password lives only in the `.env` file there,
-  readable only by the `deploy` user and never committed to Git.
+  Compose files). The deploy workflow never commits or copies `.env`, and
+  `deploy-remote.sh` refuses to run unless `/opt/produce-exchange/app/.env`
+  exists and contains all PostgreSQL keys. The server setup keeps the production
+  database password in that file, with mode 600 as an operational requirement.
 
 - **Network and firewall.** A firewall (ufw) allows only three ports from the
   internet: 22 (SSH), 80, and 443. Because the backend and the database are bound
@@ -290,19 +295,19 @@ server: Vultr, Debian 13, at 45.77.209.138).
 
 #### Deployed production architecture
 
-![Production components: an end user opens a browser that reaches nginx over HTTPS on the VPS; nginx serves the built React files and proxies /api to the uvicorn systemd service on 127.0.0.1:8000, which reads and writes the PostgreSQL Docker container on 127.0.0.1:5432; separately, a developer opens a pull request that, once merged to main, triggers GitHub Actions to lint, build (which runs the TypeScript typecheck and bundles the frontend), test, and then deploy to the VPS](diagrams/deployed-production-architecture.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1RZYbkT6EvKhhpaiVBA2DiyAtJxCju51A/view?usp=sharing)
 
-Reading the diagram, there are two separate flows. The runtime flow: an end user
+Reading the linked diagram, there are two separate flows. The runtime flow: an end user
 opens the browser, which loads the site over HTTPS, and nginx answers. nginx
 serves the React files for normal page loads and forwards `/api` calls to the
 uvicorn service on the same machine. uvicorn runs FastAPI, which validates with
 Pydantic and reads or writes the PostgreSQL container through SQLAlchemy. The
 backend and the database both listen on localhost only, so the browser reaches
-them only through nginx. The delivery flow: a developer opens a pull request, and
-merging it to `main` triggers GitHub Actions, which lints the code, builds the
-frontend (the build step runs the TypeScript typecheck), and runs the tests; only
-if all of those pass does it deploy to the VPS (copy the files over SSH, apply
-migrations, restart the backend, and health-check it). The
+them only through nginx. The delivery flow: a push to `main` triggers the Deploy
+workflow, which calls the Checks workflow to lint the code, build the frontend
+(the build step runs the TypeScript typecheck), and run the tests; only if all of
+those pass does it deploy to the VPS (copy the files over SSH, apply migrations,
+restart the backend, and health-check it). The
 request path itself (FastAPI, Pydantic, SQLAlchemy, PostgreSQL) is the same as
 development; what changes is the programs around it and the gated pipeline that
 delivers it.
@@ -316,13 +321,13 @@ production counterpart.
 
 | Concern | Development | Production | Why it differs |
 | --- | --- | --- | --- |
-| Serve the frontend | Vite dev server on `:5173`, built in memory with hot reload | nginx serves the pre-built static files from `frontend/dist` | Development needs fast edit-and-refresh; production needs a fixed, cacheable bundle. The Vite dev server is a coding tool, not meant to face the internet. |
+| Serve the frontend | Vite dev server, normally `:5173` by default, built in memory with hot reload | nginx serves the pre-built static files from `frontend/dist` | Development needs fast edit-and-refresh; production needs a fixed, cacheable bundle. The Vite dev server is a coding tool, not meant to face the internet. |
 | Route `/api` | Vite proxy forwards `/api` to `:8000` | nginx proxies `/api` to `127.0.0.1:8000` | Same job (one origin, no CORS), different tool. Vite exists only while coding; nginx is the long-running public server. |
 | Run the backend | `npm run backend` starts uvicorn with `--reload` in a terminal | systemd service, uvicorn with one worker, no reload, runs as the `deploy` user | Production must start on boot, restart on crash, run without a developer's terminal, and run as a fixed unprivileged user. `--reload` is a coding convenience production does not want. |
 | HTTPS / TLS | none; plain HTTP on localhost | nginx terminates TLS with a purchased certificate; port 80 redirects to 443 | Local development does not need certificates; a public site must encrypt traffic. |
-| Start everything | developer runs npm targets in three terminals (`db`, `backend`, `frontend`) | GitHub Actions, systemd, and Docker start and supervise the pieces | No person runs commands on the server; the pipeline and the init system own startup. |
+| Start processes | developer runs npm targets in three terminals (`db`, `backend`, `frontend`) | GitHub Actions, systemd, and Docker start and supervise the pieces | No person runs commands on the server; the pipeline and the init system own startup. |
 | Database | PostgreSQL 18.4 in Docker, port published to the dev machine | the same PostgreSQL 18.4 in Docker, bound to `127.0.0.1` only, with `restart: unless-stopped` | The image is kept identical on purpose, for parity. Production restricts the bind to localhost and adds a restart policy for reboots. |
-| Config and secrets | `.env` on the dev machine with default `produce`/`produce` credentials | `.env` at `/opt/produce-exchange/app`, mode 600, a real random password, never committed | Development can use throwaway defaults; production needs a real secret kept out of Git and unreadable by other users. |
+| Config and secrets | `.env` on the dev machine with default `produce`/`produce` credentials | server-side `.env` at `/opt/produce-exchange/app`, required by deploy and never committed | Development can use throwaway defaults; production needs a real secret kept out of Git and unreadable by other users. |
 | Deploy | not applicable; the developer just runs it locally | rsync over SSH plus `deploy-remote.sh` (migrate, restart, health-check) on push to `main` | Production needs a repeatable, gated way to ship code and to apply database migrations safely. |
 | Tests and lint | `npm run test` and `npm run lint` run by hand | CI runs the same npm targets before any deploy | Same commands, but in production they gate the merge, so code that fails them never reaches the server. |
 
@@ -340,17 +345,17 @@ them (TLS, the firewall, the localhost bindings, and a real secret).
 
 | Tool | Version | Role |
 | --- | --- | --- |
-| React | 19.2 | UI library, builds and updates the page in the browser |
-| React DOM | 19.2 | Mounts React into the page |
-| React Router | 7.17 | Client-side page navigation |
-| TypeScript | ~6.0 | Build-time static type checking |
-| Vite | 8.0 | Dev server, hot reload, production bundler, `/api` proxy |
-| Vitest | 4.1 | Frontend test runner |
-| React Testing Library | 16.3 | Renders and queries components in tests |
-| jsdom | 28.1 | Fake browser DOM for component tests |
-| Sass | 1.100 | SCSS stylesheet compilation |
-| eslint | 10.3 | JavaScript/TypeScript linter (flat config) |
-| Node.js | 20.19+ or 22.12+ | Runtime for the frontend toolchain |
+| React | 19.2.7 | UI library, builds and updates the page in the browser |
+| React DOM | 19.2.7 | Mounts React into the page |
+| React Router | 7.17.0 | Client-side page navigation |
+| TypeScript | 6.0.3 | Build-time static type checking |
+| Vite | 8.0.16 | Dev server, hot reload, production bundler, `/api` proxy |
+| Vitest | 4.1.8 | Frontend test runner |
+| React Testing Library | 16.3.2 | Renders and queries components in tests |
+| jsdom | 28.1.0 | Fake browser DOM for component tests |
+| Sass | 1.100.0 | SCSS stylesheet compilation |
+| eslint | 10.4.1 | JavaScript/TypeScript linter (flat config) |
+| Node.js | 20.19+ or 22.13+ | Runtime for the frontend toolchain |
 
 Each tool in more detail:
 
@@ -364,14 +369,16 @@ Each tool in more detail:
 - **React Router.** Moves between pages (for example `/` to the Home page and
   `/about` to the About page) without a full page reload.
 - **TypeScript.** JavaScript with a static type layer added on. Types are checked
-  at build time and then erased, so the browser runs plain JavaScript. Strict
-  checks are on, and the build runs `tsc -b` before the bundle step, so a type
-  error fails the build before any bundle is produced.
+  at build time and then erased, so the browser runs plain JavaScript. The config
+  enables selected checks such as unused local variables, unused parameters,
+  erasable syntax, and fallthrough cases in `switch` statements. It does not
+  currently enable TypeScript strict mode. The build runs `tsc -b` before the
+  bundle step, so a type error fails the build before any bundle is produced.
 - **Vite.** Two tools in one: the dev server used while coding and the bundler
   that produces the production build. In development it serves the source with hot
   module replacement, so edits show up without a full reload. Its dev proxy
-  forwards every `/api` request from port 5173 to the backend on port 8000, which
-  is why the frontend can call `/api` with no host name and no CORS setup. It
+  forwards every `/api` request from the dev server to the backend on port 8000,
+  which is why the frontend can call `/api` with no host name and no CORS setup. It
   binds the host to `127.0.0.1` on purpose, to avoid an IPv6 resolution quirk on
   Windows.
 - **Vitest.** The frontend test runner. It reuses the Vite config, so tests
@@ -393,12 +400,12 @@ Each tool in more detail:
 | Tool | Version | Role |
 | --- | --- | --- |
 | Python | 3.14.2 | Backend language |
-| FastAPI | 0.115.x | Web framework: routing, DI, OpenAPI docs |
-| uvicorn | 0.30+ | ASGI web server that hosts the app |
-| Pydantic | 2.x | Request/response validation and JSON serialization |
-| SQLAlchemy | 2.0 | ORM, one session per request |
-| psycopg | 3.2 (binary) | PostgreSQL client driver |
-| Alembic | 1.16 | Versioned database migrations |
+| FastAPI | 0.136.3 | Web framework: routing, DI, OpenAPI docs |
+| uvicorn | 0.49.0 | ASGI web server that hosts the app |
+| Pydantic | 2.13.4 | Request/response validation and JSON serialization |
+| SQLAlchemy | 2.0.50 | ORM, one session per request |
+| psycopg | 3.3.4 (binary) | PostgreSQL client driver |
+| Alembic | 1.18.4 | Versioned database migrations |
 | python-dotenv | 1.2.2 | Loads `.env` configuration |
 | pytest | 9.0.3 | Backend test framework |
 | ruff | 0.15.16 | Python linter and formatter |
@@ -415,19 +422,19 @@ Each tool in more detail:
 - **uvicorn.** The ASGI web server that holds the network socket and speaks HTTP.
   FastAPI is just application code; uvicorn is what runs it. In development it is
   launched with `--reload`, so saving a Python file restarts the server.
-- **Pydantic.** The data validation and serialization layer (version 2). You
+- **Pydantic.** The data validation and serialization layer (version 2.13.4). You
   declare a class with typed fields (`SampleRequest` has `foo: str` and
   `baz: int`), and FastAPI uses it to parse and validate incoming JSON. If a
   client sends the wrong type or omits a field, FastAPI returns a `422` with a
   structured error before your code runs. Response models such as `SampleResponse`
   control the shape of the JSON sent back.
-- **SQLAlchemy.** The ORM (version 2.0). It maps the `SampleData` Python class to
+- **SQLAlchemy.** The ORM (version 2.0.50). It maps the `SampleData` Python class to
   the `sample_data` table so handlers work with objects instead of raw SQL.
   `app/db.py` builds the connection URL from environment variables, creates the
   engine with `pool_pre_ping=True` so dead pooled connections are caught before
   use, and exposes a `get_db_session()` generator that is the unit of work for one
   request.
-- **psycopg.** The PostgreSQL client driver (version 3) that SQLAlchemy uses
+- **psycopg.** The PostgreSQL client driver (version 3.3.4) that SQLAlchemy uses
   underneath to talk to the database (`postgresql+psycopg`).
 - **Alembic.** Database migrations. It records schema changes as versioned Python
   files. Its `env.py` imports the SQLAlchemy metadata, so a new migration can be
@@ -448,27 +455,31 @@ Each tool in more detail:
 | --- | --- | --- |
 | PostgreSQL | 18.4 | Relational database (in Docker) |
 | Docker Compose | n/a | Runs the single `db` container |
-| Astral uv | 8.2.0 (CI) | Python dependency and interpreter manager |
+| Astral uv | setup-uv action v8.2.0 in CI | Python dependency and interpreter manager |
 | GitHub Actions | n/a | CI (lint, build, test) and CD (deploy to VPS) |
-| nginx | 1.26 | TLS proxy and static file server in production |
+| nginx | Debian package | TLS proxy and static file server in production |
 
 Each tool in more detail:
 
-- **PostgreSQL.** The database, version 18.4, running in Docker. It listens on
-  `127.0.0.1:5432` and stores its files in a named volume (`produce_db_data`) so
-  data survives container restarts. A `pg_isready` health check lets startup wait
+- **PostgreSQL.** The database, version 18.4, running in Docker. By default,
+  Docker publishes it on `127.0.0.1:5432`; `POSTGRES_PORT` can change the host
+  port. It stores its files in a named volume (`produce_db_data`) so data
+  survives container restarts. A `pg_isready` health check lets startup wait
   until the database accepts connections before anything tries to use it.
 - **Docker Compose.** Runs the single `db` container, the lightest use of
   containers: just enough to give every developer the same database version. One
   command starts, stops, and wipes that database.
 - **Astral uv.** The Python side of the toolchain. It pins the interpreter
   (3.14.2), resolves dependencies, and writes a `uv.lock` lockfile; the `--locked`
-  flag everywhere means CI and every developer install the identical dependency
-  graph. Every Python process is launched through `uv run`.
+  flag means CI and every developer install the identical dependency graph. Local
+  npm targets launch backend Python commands through `uv run`. The production
+  deploy script installs with `uv sync --locked --no-dev`, then runs Alembic and
+  the seed script from `backend/.venv/bin`.
 - **GitHub Actions.** The CI and CD service. The Checks workflow runs on every
-  pull request and on pushes to `main`, on a fresh Ubuntu runner with Node and uv,
-  running the same npm targets a developer would (setup, lint, build, test). The
-  Deploy workflow ships the code to the VPS after the checks pass.
+  pull request and when the Deploy workflow calls it for a push to `main`, on a
+  fresh Ubuntu runner with Node and uv, running the same npm targets a developer
+  would (setup, lint, build, test). The Deploy workflow ships the code to the VPS
+  after the checks pass.
 - **nginx.** In production it terminates TLS and serves the built frontend, and
   it proxies `/api` to the backend. It is the production stand-in for Vite's dev
   proxy.
@@ -498,9 +509,9 @@ On a developer's machine, the full toolset is available and run by hand:
   checker, and it also formats the autogenerated Alembic migration files through a
   post-write hook, so generated files match the project style.
 - **TypeScript (tsc)** - the type checker. `tsc -b` checks types across the
-  project references with strict checks on; a type error fails the build before
-  any bundle is produced. A standalone `npm run typecheck` target runs this check
-  on its own.
+  project references with the compiler checks enabled in the TypeScript config; a
+  type error fails the build before any bundle is produced. A standalone
+  `npm run typecheck` target runs this check on its own.
 - **Vitest** - the frontend test runner. It reuses the Vite config, so tests
   transform code the same way the app does.
 - **React Testing Library** - renders components and queries the rendered output
@@ -546,11 +557,11 @@ test runner is present on the live server.
 - **No external services.** Vitest uses jsdom and stubbed network calls, and
   pytest uses in-memory SQLite, so neither needs Docker or a running database.
 
-The diagram below shows the development workflow. It and the production diagram
-that follows share the same three check steps (the white boxes: lint, typecheck,
+The linked development workflow diagram and the production diagram that follows
+share the same three check steps (the white boxes: lint, typecheck,
 test); the amber boxes are the parts that differ between the two.
 
-![Development code-quality loop: the developer edits code on their local machine, then runs lint (eslint + ruff), typecheck (tsc), and test (Vitest and pytest); if anything fails they fix and re-run, and when all pass they commit or open a pull request](diagrams/code-quality-dev.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1L0tYqvfWC8S1zUK12vxvg_ns-UGMkCQ-/view?usp=sharing)
 
 The development loop is manual and fast, driven by the developer. After editing
 code, the developer runs the three checks (in practice often all at once).
@@ -570,7 +581,8 @@ later, in CI.
 
 - **Where.** On a fresh GitHub Actions Ubuntu runner (the delivery pipeline),
   never on the production VPS.
-- **When.** On every pull request and on merge to `main`.
+- **When.** On every pull request, and during the Deploy workflow after a push to
+  `main`.
 - **How.** The Checks workflow runs the same npm targets a developer would:
   `npm run setup`, then `lint`, then `build` (which runs the `tsc` typecheck),
   then `test`. Because CI runs the identical commands, "passes locally" and
@@ -578,25 +590,25 @@ later, in CI.
 - **As a gate.** The Deploy workflow's deploy step depends on the checks passing,
   so code that fails a linter, the type check, or a test never reaches production.
 
-The diagram below is the same three checks wrapped in an automated, gated
-pipeline. Compared with the development loop, the amber boxes are what differs:
+The linked production diagram is the same three checks wrapped in an automated,
+gated pipeline. Compared with the development loop, the amber boxes are what differs:
 the trigger, an added setup step, and the outcome.
 
-![Production code-quality pipeline: a pull request or merge to main on a fresh Ubuntu runner runs npm run setup, then the same lint, typecheck, and test steps; if all pass the deploy job runs (only on merge to main), and if any fails the pull request is blocked and nothing deploys](diagrams/code-quality-prod.svg)
+[(Link to diagram)](https://drive.google.com/file/d/1ZZvn7Wj8MIhc_RCGJxUeljV_VUe_Refx/view?usp=sharing)
 
-Opening a pull request, or merging one into `main`, triggers the Checks workflow
-on a fresh Ubuntu runner: a clean machine each time, so results never depend on a
-developer's local setup. Because the runner starts empty, the pipeline first runs
-`npm run setup` to install both the frontend and backend dependencies (this step
-has no equivalent in the development loop, where the dependencies are already
-installed). It then runs the same three checks as development, with one wrinkle:
-the TypeScript typecheck runs as part of `npm run build` (before the Vite bundle)
-rather than as a standalone command. As in development, the tests need no external
-services. The outcome is the real difference: if any step fails, the workflow
-fails and the pull request is blocked, so nothing deploys; if every check passes
-and the event was a merge to `main`, the Deploy job ships the code to the VPS.
-This is the gate that guarantees code reaching production has passed the identical
-checks a developer runs locally.
+Opening a pull request triggers the Checks workflow on a new GitHub-hosted Ubuntu
+runner, so results never depend on a developer's local setup. A push to `main`
+triggers the Deploy workflow, which first calls the same Checks workflow. Because
+the runner starts empty, the pipeline first runs `npm run setup` to install both
+the frontend and backend dependencies (this step has no equivalent in the
+development loop, where the dependencies are already installed). It then runs the
+same three checks as development, with one wrinkle: the TypeScript typecheck runs
+as part of `npm run build` (before the Vite bundle) rather than as a standalone
+command. As in development, the tests need no external services. The outcome is
+the real difference: if any step fails, the workflow fails and the pull request is
+blocked, so nothing deploys; if every check passes during a main deploy run, the
+Deploy job ships the code to the VPS. This is the gate that guarantees code
+reaching production has passed the identical checks a developer runs locally.
 
 ---
 
@@ -625,11 +637,11 @@ plus the open risks that should be tracked.
   while real Postgres behaves differently. Anything that depends on
   Postgres-specific features will not be caught by the unit tests.
 
-- **One container for the database only; everything else runs on the host.**
-  Upside: the simplest possible setup; every developer gets the same database
-  version with one command. Risk: the frontend and backend are not containerized,
-  so "works on my machine" can still drift from the production server even though
-  the database matches.
+- **One container for the database only; the frontend and backend run on the
+  host.** Upside: the runtime has only one container, and every developer gets
+  the same database version with one command. Risk: the frontend and backend are
+  not containerized, so "works on my machine" can still drift from the production
+  server even though the database matches.
 
 - **The `/api` proxy avoids CORS in development.** Upside: the React code can
   call `/api/...` with no host name and no CORS configuration. Tradeoff: this
@@ -653,14 +665,15 @@ plus the open risks that should be tracked.
   user, sessions, or permissions in the code. Any feature that needs to know
   "who is doing this" will require this to be designed and added first.
 
-- **Migrations cannot be undone in production.** A code rollback is a git revert,
-  but a database migration that has already run cannot be automatically reversed.
-  Schema changes need care.
+- **No automatic production downgrade path.** Deploys only run
+  `alembic upgrade head`. Some migrations may define `downgrade()`, but
+  production rollback does not run an automatic downgrade. Schema rollback needs
+  a deliberate migration or restore plan.
 
 - **Cleartext default database credentials in config defaults.** The default
-  username and password are both `produce`. This is fine for local development
-  but the production secret handling should be confirmed (the deploy excludes
-  `.env`, so production uses its own values, but this should be verified).
+  username and password are both `produce`. This is fine for local development,
+  and the deploy script refuses to run without a populated production `.env`
+  file. The risk is that those defaults must never be used for a public database.
 
 - **TLS certificate has a fixed expiry (2026-12-21).** Renewal needs to be
   tracked so the site does not go down when it lapses.

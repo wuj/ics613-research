@@ -3,12 +3,12 @@ sequenceDiagram
     participant U as User / Browser
     participant R as React HomePage
     participant S as fetch service
-    participant V as Vite proxy :5173
+    participant V as Vite proxy :5173 default
     participant K as uvicorn :8000
     participant F as FastAPI router
     participant P as Pydantic
     participant O as SQLAlchemy
-    participant DB as PostgreSQL :5432
+    participant DB as PostgreSQL :5432 default
 
     U->>R: click "Call backend API"
     R->>S: sendSampleEndpointRequest(bodyText)

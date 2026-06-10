@@ -19,7 +19,7 @@ flowchart TB
         REACT --> SCSS
     end
 
-    subgraph VITE["Vite 8 dev server, 127.0.0.1:5173"]
+    subgraph VITE["Vite 8 dev server, 127.0.0.1:5173 default"]
         direction TB
         VITEDEV["@vitejs/plugin-react<br/>HMR + TS/JSX transform"]
         PROXY["server.proxy<br/>/api -> http://127.0.0.1:8000"]
@@ -46,14 +46,14 @@ flowchart TB
 
     subgraph DB["Database (Docker)"]
         direction TB
-        PG["PostgreSQL 18.4<br/>127.0.0.1:5432<br/>volume produce_db_data"]
+        PG["PostgreSQL 18.4<br/>127.0.0.1, 5432 default<br/>volume produce_db_data"]
         TBL["table sample_data<br/>id, slug unique, name, note"]
         PG --> TBL
     end
 
     subgraph MIG["Schema + seed tooling"]
         direction TB
-        ALEMBIC["Alembic 1.16<br/>env.py uses Base.metadata<br/>rev cd9306b0de55: create sample_data"]
+        ALEMBIC["Alembic 1.18.4<br/>env.py uses Base.metadata<br/>rev cd9306b0de55: create sample_data"]
         SEED["app/seed.py<br/>inserts 3 demo rows, idempotent"]
     end
 
@@ -68,7 +68,7 @@ flowchart TB
 
     subgraph CI["GitHub Actions: .github/workflows/unit-tests.yml (Checks)"]
         direction TB
-        TRIG["on: pull_request, push to main, workflow_dispatch<br/>ubuntu-latest, Node 22, uv 8.2.0"]
+        TRIG["on: pull_request, workflow_call, workflow_dispatch<br/>ubuntu-latest, Node 22, setup-uv v8.2.0"]
         STEPS["npm run setup -> lint -> build -> test"]
         TRIG --> STEPS
     end

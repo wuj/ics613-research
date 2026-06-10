@@ -19,7 +19,7 @@ flowchart TB
         REACT --> SCSS
     end
 
-    subgraph WEB["nginx 1.26 host package, public :80 and :443 (replaces the Vite dev server)"]
+    subgraph WEB["nginx host package, public :80 and :443 (replaces the Vite dev server)"]
         direction TB
         NGINXTLS["TLS termination<br/>:443 http2, :80 -> 301 https<br/>cert /etc/ssl/produce/fullchain.pem"]
         NGINXSERVE["serves frontend/dist<br/>SPA fallback to index.html<br/>gzip + security headers"]
@@ -49,14 +49,14 @@ flowchart TB
 
     subgraph DB["Database (Docker)"]
         direction TB
-        PG["PostgreSQL 18.4 (container app-db-1)<br/>127.0.0.1:5432<br/>volume produce_db_data<br/>restart: unless-stopped"]
+        PG["PostgreSQL 18.4 (container app-db-1)<br/>127.0.0.1 only, 5432 default<br/>volume produce_db_data<br/>restart: unless-stopped"]
         TBL["table sample_data<br/>id, slug unique, name, note"]
         PG --> TBL
     end
 
     subgraph MIG["Schema + seed tooling (run by the deploy script on every deploy)"]
         direction TB
-        ALEMBIC["Alembic 1.16<br/>alembic upgrade head"]
+        ALEMBIC["Alembic 1.18.4<br/>alembic upgrade head"]
         SEED["app/seed.py<br/>inserts 3 demo rows, idempotent"]
     end
 
@@ -71,7 +71,7 @@ flowchart TB
 
     subgraph CI["GitHub Actions: adds Deploy on top of the Checks workflow"]
         direction TB
-        REPO["repo ICS613-Team4/local-produce-exchange<br/>on: merge to main"]
+        REPO["repo ICS613-Team4/local-produce-exchange<br/>on: push to main"]
         CHECKS["Checks (unit-tests.yml)<br/>npm run setup -> lint -> build -> test"]
         DEPLOYJOB["Deploy (deploy.yml)<br/>build frontend, rsync over SSH,<br/>run deploy-remote.sh"]
         REPO --> CHECKS

@@ -1,11 +1,11 @@
 flowchart TB
-    TRIG["Pull request, or merge to main<br/>(fresh Ubuntu runner, automated)"]
+    TRIG["Pull request, or push to main<br/>(fresh Ubuntu runner, automated)"]
     SETUP["npm run setup<br/>install frontend + backend deps"]
     LINT["lint<br/>eslint (frontend) + ruff (backend)"]
-    TYPE["typecheck<br/>tsc -b (strict)"]
+    TYPE["typecheck<br/>tsc -b"]
     TEST["test<br/>Vitest + RTL + jsdom (frontend)<br/>pytest + in-memory SQLite (backend)"]
     DECIDE{"all pass?"}
-    OUT["deploy to the VPS<br/>(only on merge to main)"]
+    OUT["deploy to the VPS<br/>(only on main)"]
     BLOCK["checks fail<br/>pull request blocked, no deploy"]
 
     TRIG --> SETUP --> LINT --> TYPE --> TEST --> DECIDE

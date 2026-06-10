@@ -2,7 +2,7 @@ flowchart TB
     DEVELOPER["Developer"]
     BROWSER["Browser"]
 
-    subgraph DEV["Frontend dev server :5173"]
+    subgraph DEV["Frontend dev server :5173 default"]
         REACT["React 19 + TypeScript<br/>pages, services, router"]
         VITE["Vite<br/>transforms, serves, HMR<br/>/api proxy to :8000"]
         REACT -->|"fetch /api/*"| VITE
@@ -16,7 +16,7 @@ flowchart TB
         FASTAPI --> ORM
     end
 
-    subgraph DATA["Database (Docker :5432)"]
+    subgraph DATA["Database (Docker :5432 default)"]
         PG["PostgreSQL 18.4"]
     end
 

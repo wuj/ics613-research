@@ -1,7 +1,7 @@
 flowchart TB
     TRIG["Developer edits code<br/>(local machine, run by hand)"]
     LINT["lint<br/>eslint (frontend) + ruff (backend)"]
-    TYPE["typecheck<br/>tsc -b (strict)"]
+    TYPE["typecheck<br/>tsc -b"]
     TEST["test<br/>Vitest + RTL + jsdom (frontend)<br/>pytest + in-memory SQLite (backend)"]
     DECIDE{"all pass?"}
     OUT["commit / open pull request"]
