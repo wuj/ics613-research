@@ -58,7 +58,7 @@ orchestration, the React and TypeScript frontend served by Vite, the
 FastAPI/uvicorn backend, PostgreSQL in Docker, the Alembic and seed tooling, the
 test and lint tools, and the GitHub Actions checks.
 
-![Surplus end-to-end architecture: npm orchestration, React/Vite frontend, FastAPI/uvicorn backend, PostgreSQL, and GitHub Actions](diagrams/architecture.svg)
+![Surplus end-to-end architecture: npm orchestration, React/Vite frontend, FastAPI/uvicorn backend, PostgreSQL, and GitHub Actions](diagrams/static-dev-architecture.svg)
 
 ### Detailed static prod architecture view
 
@@ -91,7 +91,7 @@ What differs in production:
 Solid arrows are the live request path; dotted arrows are supervision, schema and
 seed, and delivery.
 
-![Production end-to-end architecture mirroring the dev view, with the parts that differ highlighted: nginx replaces the Vite dev server (TLS, serves the built frontend, proxies /api); uvicorn runs under systemd with one worker and no reload; PostgreSQL adds a restart policy; the deploy script runs Alembic and the seeder; quality tooling runs in CI only; and GitHub Actions adds a Deploy workflow](diagrams/production-architecture.svg)
+![Production end-to-end architecture mirroring the dev view, with the parts that differ highlighted: nginx replaces the Vite dev server (TLS, serves the built frontend, proxies /api); uvicorn runs under systemd with one worker and no reload; PostgreSQL adds a restart policy; the deploy script runs Alembic and the seeder; quality tooling runs in CI only; and GitHub Actions adds a Deploy workflow](diagrams/static-prod-architecture.svg)
 
 ### Application runtime request path
 
@@ -217,7 +217,7 @@ the live
 request path, and dotted arrows are tooling that acts on a component rather than
 serving traffic.
 
-![Component relationships in development: the developer runs npm targets that start the Vite dev server, the backend, and the database; the Vite dev server hosts the React and TypeScript app, which the browser loads and runs; the app's /api calls go through the Vite proxy to FastAPI, which validates with Pydantic and reads through SQLAlchemy into PostgreSQL; Alembic migrates the schema](diagrams/component-relationships.svg)
+![Component relationships in development: the developer runs npm targets that start the Vite dev server, the backend, and the database; the Vite dev server hosts the React and TypeScript app, which the browser loads and runs; the app's /api calls go through the Vite proxy to FastAPI, which validates with Pydantic and reads through SQLAlchemy into PostgreSQL; Alembic migrates the schema](diagrams/local-development-architecture.svg)
 
 Reading the diagram: the developer runs the npm targets, which start the Vite dev
 server, the backend, and the database (and drive Alembic for schema changes). The
@@ -282,7 +282,7 @@ server: Vultr, Debian 13, at 45.77.209.138).
 
 #### Deployed production architecture
 
-![Production components: an end user opens a browser that reaches nginx over HTTPS on the VPS; nginx serves the built React files and proxies /api to the uvicorn systemd service on 127.0.0.1:8000, which reads and writes the PostgreSQL Docker container on 127.0.0.1:5432; separately, a developer opens a pull request that, once merged to main, triggers GitHub Actions to lint, build (which runs the TypeScript typecheck and bundles the frontend), test, and then deploy to the VPS](diagrams/production-components.svg)
+![Production components: an end user opens a browser that reaches nginx over HTTPS on the VPS; nginx serves the built React files and proxies /api to the uvicorn systemd service on 127.0.0.1:8000, which reads and writes the PostgreSQL Docker container on 127.0.0.1:5432; separately, a developer opens a pull request that, once merged to main, triggers GitHub Actions to lint, build (which runs the TypeScript typecheck and bundles the frontend), test, and then deploy to the VPS](diagrams/deployed-production-architecture.svg)
 
 Reading the diagram, there are two separate flows. The runtime flow: an end user
 opens the browser, which loads the site over HTTPS, and nginx answers. nginx
