@@ -1,47 +1,131 @@
-# Deploying Local Produce Exchange
+# Team 4 - Deployment Guide
 
 This document explains how the production deploy works and how to operate
 the live server. The site runs at https://localharvest.exchange.
 
 Every push to the `main` branch deploys automatically through GitHub
 Actions. You can also start a deploy by hand from the Actions tab (see
-"Manual redeploy"). There is nothing to run from a laptop.
+"Manual redeploy"). In normal operation, you do not run a deploy command
+from a laptop.
 
-## How a deploy flows
+## How GitHub Actions deploys
 
-The deploy lives in two workflow files under `.github/workflows/`:
+GitHub Actions is the automation service that runs commands after a GitHub
+event, such as a pull request or a push to `main`. Each run uses a
+temporary Ubuntu runner. The runner checks out the repo, installs the tools
+the workflow asks for, runs the commands, and then is thrown away.
 
-- `unit-tests.yml` (named "Checks"): lints, builds the frontend, and runs
-  the tests. It runs on every pull request, and the Deploy workflow calls
-  it as a reusable step.
-- `deploy.yml` (named "Deploy"): runs on every push to `main` and on a
-  manual trigger.
+The repo has two active workflow files under `.github/workflows/`:
+
+- `unit-tests.yml` is named "Checks". It lints the code, builds the
+  frontend, and runs the tests.
+- `deploy.yml` is named "Deploy". It deploys to the VPS after Checks
+  passes.
+
+### Checks workflow
+
+The Checks workflow runs in three cases:
+
+- on every pull request,
+- when another workflow calls it with `workflow_call`, and
+- when someone starts it by hand from the Actions tab.
+
+The job runs on `ubuntu-latest` and has a 15-minute timeout. It checks out
+the repo, sets up Node.js 22, sets up `uv`, installs dependencies with
+`npm run setup`, runs `npm run lint`, runs `npm run build`, and runs
+`npm test`.
+
+Checks has its own concurrency rule. Concurrency means GitHub does not
+keep wasting time on an older run after a newer run starts for the same
+branch or pull request. For Checks, `cancel-in-progress: true` cancels the
+older run.
+
+### Deploy workflow
+
+The Deploy workflow starts in two cases:
+
+- every push to `main`, including a merged pull request, and
+- a manual run from the Actions tab.
+
+The workflow has one concurrency group named `deploy-production`. This
+means GitHub never runs two production deploys at the same time. The
+setting `cancel-in-progress: false` means a newer deploy waits for the
+current deploy to finish instead of stopping it halfway through.
 
 The Deploy workflow has two jobs:
 
 1. `checks`: calls the Checks workflow. If lint, build, or tests fail, the
-   deploy stops here and nothing reaches the server.
-2. `deploy`: runs only after `checks` passes. In order, it
-   1. builds the frontend on the GitHub runner (the server never gets
-      Node),
-   2. copies `backend/`, `docker-compose.yml`, and `scripts/` to the
-      server with rsync,
-   3. runs `scripts/deploy-remote.sh` on the server over SSH, and
-   4. copies the freshly built `frontend/dist` to the server, but only
-      after step 3 succeeds.
+   workflow stops here and nothing is copied to the server.
+2. `deploy`: waits for `checks` with `needs: checks`. It also has
+   `if: github.ref == 'refs/heads/main'`, so a manual run from another
+   branch can run Checks but cannot deploy. This job has a 15-minute
+   timeout.
 
-`scripts/deploy-remote.sh` is the server side of every deploy. It checks
-that the `.env` file is present and complete, installs backend
-dependencies with `uv`, makes sure the database container is up and
-healthy, applies any new database migrations (`alembic upgrade head`),
-seeds the demo rows if the table is empty, restarts the backend, waits
-for `/api/health`, and finishes with one request that touches the
-database.
+The deploy job runs these steps in order:
+
+1. Check out the repo on the runner.
+2. Set up Node.js 22 and enable npm caching for the frontend lock file.
+3. Install `rsync` on the runner.
+4. Build the frontend with `npm --prefix frontend ci` and
+   `npm --prefix frontend run build`. The server does not install Node or
+   build the frontend.
+5. Write the SSH key and known-hosts file from GitHub secrets. The
+   known-hosts file pins the VPS SSH host key, so the runner connects to
+   the expected server instead of trusting a fresh scan during deploy.
+6. Copy `backend/`, `docker-compose.yml`, and `scripts/` to
+   `/opt/produce-exchange/app/` with `rsync`. This copy uses `--delete`,
+   so files removed from those source paths are removed from the matching
+   paths on the server. It excludes `.env`, `docker-compose.override.yml`,
+   `backend/.venv`, Python cache folders, pytest cache, and ruff cache.
+7. Run `bash /opt/produce-exchange/app/scripts/deploy-remote.sh` on the
+   server over SSH.
+8. Copy the freshly built `frontend/dist` to the server with `rsync`, but
+   only if the remote script finished successfully.
+
+`scripts/deploy-remote.sh` is the server-side gate. It checks that the
+production `.env` file exists and has every required PostgreSQL key,
+installs backend dependencies with `uv`, starts or updates the database
+container and waits for it to become healthy, runs
+`alembic upgrade head`, runs the seed script, restarts the backend through
+systemd, waits for `/api/health`, and sends one request to
+`/api/sample-endpoint` so the deploy proves it can read from the database.
 
 The frontend is copied last on purpose. nginx serves `frontend/dist`
 straight from disk, so the new pages go live the moment the files land.
 Copying them after the backend is migrated and healthy means a failure
-partway through never shows a new UI against a backend that is not ready.
+before that point keeps the old frontend in place. If the remote script
+fails before the backend restart, the old backend keeps running too. If it
+fails after the restart, the API may be down or serving the new backend
+until someone deploys a fix or reverts.
+
+## Deployment gates
+
+A gate is a condition that must pass before the next deploy step can run.
+The current gates are:
+
+- Pull requests run Checks, so reviewers can see lint, build, and test
+  status before merging.
+- A push to `main` starts Deploy, but Deploy calls Checks again before it
+  copies files to the VPS.
+- The deploy job runs only on `main`, even for a manual run.
+- The `deploy-production` concurrency group prevents overlapping deploys.
+- The SSH setup step must have all four deployment secrets, and the
+  known-hosts value must match the server key.
+- The remote script refuses to deploy if the production `.env` file is
+  missing or incomplete.
+- The database container must be healthy before migrations run.
+- Migrations must finish before the backend restarts.
+- The backend must answer `/api/health` after restart.
+- The database-backed check request must succeed before the workflow
+  copies the new frontend.
+
+As checked on June 10, 2026, GitHub itself does not add a separate merge
+or deploy gate around these workflows. The `main` branch is not protected,
+there are no repository rulesets, and there are no GitHub deployment
+environments with approval rules. This means a user with write access can
+push or merge to `main` without GitHub blocking the merge for required
+status checks. The production deploy still has to pass the Checks job and
+the deploy gates above before the new frontend is copied.
 
 ## Architecture
 
@@ -58,7 +142,7 @@ partway through never shows a new UI against a backend that is not ready.
 
 ## The server (vps2)
 
-- Host: Vultr, 45.77.209.138, Debian 13, 961MB RAM plus 3GB swap, 23GB
+- Host: Vultr, 45.77.209.138, Debian 13, 961MB RAM plus 3GB swap, 30GB
   disk.
 - Admin login: `ssh vps2`, an SSH config alias on the admin machine that
   connects as the server's admin user with passwordless sudo.
@@ -83,8 +167,8 @@ partway through never shows a new UI against a backend that is not ready.
   Postgres is also unreachable from outside because Docker publishes it on
   `127.0.0.1` only.
 - `/opt/produce-exchange/app/.env` (mode 600, owner `deploy`): the only
-  copy of the real database password. It is never committed and never
-  copied by a deploy.
+  plaintext copy of the real database password. It is never committed and
+  never copied by a deploy.
 - `produce-backend.service` (enabled): uvicorn, one worker,
   `127.0.0.1:8000`, `LOG_LEVEL=INFO`, restarts on failure.
 - TLS: private key at `/etc/ssl/private/produce.key` (never leaves the
@@ -96,8 +180,12 @@ partway through never shows a new UI against a backend that is not ready.
 
 ## GitHub repository secrets
 
-The Deploy workflow reads four secrets (Settings -> Secrets and variables
--> Actions):
+The Deploy workflow reads four GitHub Actions secrets (Settings -> Secrets
+and variables -> Actions). As checked on June 10, 2026, these four secret
+names exist. GitHub hides the secret values after they are saved, so the
+CLI can confirm the names and update times but cannot print the values.
+Recent Deploy runs have succeeded, which confirms the saved values are
+usable by the workflow.
 
 - `DEPLOY_SSH_KEY`: the private half of the deploy key. The workflow
   writes it onto the runner and uses it to reach the `deploy` user.
@@ -136,10 +224,11 @@ migration files in `backend/migrations/versions/`, and each deploy runs
 1. Edit or add the model files under `backend/app/models/`.
 2. Make sure any new model module is imported in
    `backend/app/models/__init__.py`. Alembic only sees tables that an
-   import has registered. If you forget the import, Alembic does not see
-   the table and writes a `drop_table` for it into the generated
-   migration, which would delete it. A surprise `drop_table` in the
-   generated file is the warning sign.
+   import has registered. If you forget an import, Alembic compares the
+   database to incomplete metadata. For a new table, the generated
+   migration may omit the `create_table`. For an existing table that fell
+   out of the imports, Alembic may write a `drop_table`. A surprise
+   missing `create_table` or surprise `drop_table` is the warning sign.
 3. Generate the migration: `npm run db:revision -- "short message"`.
 4. Read the generated file under `backend/migrations/versions/` and
    confirm it does what you expect.
@@ -202,24 +291,25 @@ The `sudo` is needed because `ssh vps2` logs in as the admin user, who is
 not in the docker group. Keep the .sql files on the admin machine, not the
 server. The dump includes Alembic's `alembic_version` table, so a restored
 database remembers which migrations it already has, and the next deploy
-applies only newer ones. After an empty-volume restore, the next deploy's
-seed step sees rows and skips itself.
+applies only newer ones. If the restored dump includes rows in
+`sample_data`, the next deploy's seed step skips itself. If that table is
+empty, the seed step inserts the three demo rows.
 
 ## Automated database backups
 
-A systemd timer takes a database backup every 6 hours, so the data is not left
-to hand-run dumps alone. The pieces:
+A systemd timer takes a database backup every 6 hours, so recovery does
+not depend on hand-run dumps alone. The pieces:
 
 - Backup directory: `/opt/produce-exchange/backups/`, mode 750, owned by
   `deploy:deploy`. It is a sibling of `app/`, so the deploy rsync (which
-  only reaches inside `backend/` and `scripts/`) never touches it.
+  only targets paths under `/opt/produce-exchange/app/`) never touches it.
 - Backup script: `/opt/produce-exchange/backup-db.sh`, run as the `deploy`
   user. It runs `pg_dump` on the one database, compresses the result with
   gzip, and writes a timestamped file named
   `produce_exchange-YYYYmmdd-HHMMSS.sql.gz`. The script writes to a `.tmp`
   file first and checks that the dump is non-empty and passes `gzip -t`
   before giving it the final name, so a crashed dump never leaves a
-  half-written file that looks like a good backup. It then deletes dumps
+  half-written file that looks like a complete dump. It then deletes dumps
   older than 30 days.
 - systemd units: `produce-db-backup.service` (a oneshot that runs the
   script as `deploy` with the `docker` group added) and
@@ -232,7 +322,8 @@ to hand-run dumps alone. The pieces:
 This protects against logical loss such as a bad migration or an accidental
 delete, where you restore from a recent dump. It does not protect against
 losing the whole VPS or its disk, because the backups live on the same
-server; an off-box copy was left out on purpose to keep this simple.
+server; an off-box copy was left out to avoid adding another account,
+credential, and scheduled transfer.
 
 The dump files are readable only by the `deploy` user (the directory is
 mode 750 and each file is mode 600), so admin commands that read them use
@@ -262,10 +353,11 @@ because the SSH login is the admin user, not `deploy`:
 
     ssh vps2 "bash -o pipefail -c 'cd /opt/produce-exchange/app && sudo gunzip -c /opt/produce-exchange/backups/produce_exchange-YYYYmmdd-HHMMSS.sql.gz | sudo docker compose exec -T db psql -v ON_ERROR_STOP=1 -U produce -d produce_exchange'"
 
-For a clean restore, recreate the volume first (`down --volumes`, then
-`up -d --wait db`), the same as the manual section above. The dump includes
-the `alembic_version` table, so a restored database remembers its migration
-state and the next deploy applies only newer migrations.
+To restore into an empty volume, recreate the volume first
+(`down --volumes`, then `up -d --wait db`), the same as the manual section
+above. The dump includes the `alembic_version` table, so a restored
+database remembers its migration state and the next deploy applies only
+newer migrations.
 
 ## Database password rotation
 
