@@ -262,6 +262,14 @@ server: Vultr, Debian 13, at 45.77.209.138).
   override file adds `restart: unless-stopped` so the container comes back by
   itself after a reboot.
 
+- **Database backups.** A systemd timer (`produce-db-backup.timer`) takes a
+  compressed `pg_dump` of the database every 6 hours (00:00, 06:00, 12:00, and
+  18:00 UTC) into `/opt/produce-exchange/backups/`, and keeps the dumps for 30
+  days by file age. The dumps live on the same VPS, which protects against
+  logical loss (a bad migration or an accidental delete) but not against losing
+  the server itself; an off-box copy is a planned extension. The full setup and
+  restore steps are in `database-backup-and-restore.md`.
+
 - **App files and secrets.** Everything lives under `/opt/produce-exchange/app`
   (the `backend` folder, the built `frontend/dist`, the deploy `scripts`, and the
   Compose files). The real database password lives only in the `.env` file there,

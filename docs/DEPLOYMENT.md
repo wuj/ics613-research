@@ -207,7 +207,7 @@ seed step sees rows and skips itself.
 
 ## Automated database backups
 
-A systemd timer takes a database backup once a day, so the data is not left
+A systemd timer takes a database backup every 6 hours, so the data is not left
 to hand-run dumps alone. The pieces:
 
 - Backup directory: `/opt/produce-exchange/backups/`, mode 750, owned by
@@ -223,7 +223,8 @@ to hand-run dumps alone. The pieces:
   older than 30 days.
 - systemd units: `produce-db-backup.service` (a oneshot that runs the
   script as `deploy` with the `docker` group added) and
-  `produce-db-backup.timer` (fires daily at 03:30 UTC, a low-traffic time).
+  `produce-db-backup.timer` (fires every 6 hours, at 00:00, 06:00, 12:00,
+  and 18:00 UTC).
   The timer has `Persistent=true`, so a backup missed while the box was off
   runs at the next boot. No sudoers change was needed: the service runs as
   `deploy`, which is already in the `docker` group.

@@ -2,7 +2,7 @@
 
 This is a hands-on guide to the automatic database backup that runs on the
 production server (vps2), the box that serves https://localharvest.exchange. It
-explains what a backup is, how the daily backup is wired up, how to set it up
+explains what a backup is, how the backup is wired up, how to set it up
 from scratch, and, most important, how to get your data back when something goes
 wrong.
 
@@ -17,7 +17,7 @@ tool is new, this guide points back to the equivalent you already know.
 ## 1. What this guide covers
 
 - The idea: what a database backup is, in plain terms.
-- The three pieces that make the daily backup run on the server.
+- The three pieces that make the backup run on the server.
 - A line-by-line walk through the backup script.
 - A tutorial to set the whole thing up on a fresh server.
 - How to confirm it is running.
@@ -37,7 +37,7 @@ plain SQL you could open in any text editor.
 
 That text file is then compressed with `gzip` to save space (the same gzip you
 know from `.gz` files), so each saved backup is named something like
-`produce_exchange-20260609-033000.sql.gz`.
+`produce_exchange-20260609-120000.sql.gz`.
 
 Restoring is the reverse: you uncompress the file and feed the SQL back into the
 database, which replays every `CREATE` and `INSERT` and ends up exactly where the
@@ -65,7 +65,7 @@ application code, and the database itself is not modified.
 | Backups folder | `/opt/produce-exchange/backups/` | Holds the saved `.sql.gz` files |
 | Backup script | `/opt/produce-exchange/backup-db.sh` | Does one backup: dump, compress, check, rotate |
 | Service unit | `/etc/systemd/system/produce-db-backup.service` | Tells the server how to run the script |
-| Timer unit | `/etc/systemd/system/produce-db-backup.timer` | Tells the server when to run it (daily) |
+| Timer unit | `/etc/systemd/system/produce-db-backup.timer` | Tells the server when to run it (every 6 hours) |
 
 The folder sits next to the application folder (`app/`), not inside it, so the
 deploy process, which mirrors files into `app/` and deletes anything extra there,
@@ -73,7 +73,7 @@ can never remove your backups.
 
 ## 4. How the schedule works: systemd timers
 
-On this server the daily run is handled by **systemd**, the program that starts
+On this server the scheduled run is handled by **systemd**, the program that starts
 and supervises background services on most modern Linux systems. A systemd
 **timer** is its version of a cron job or the Windows Task Scheduler: it fires on
 a schedule and starts something.
@@ -84,21 +84,21 @@ The timer file (`produce-db-backup.timer`) holds the schedule:
 
 ```ini
 [Unit]
-Description=Run the Local Produce Exchange database backup daily
+Description=Run the Local Produce Exchange database backup every 6 hours
 
 [Timer]
-OnCalendar=*-*-* 03:30:00 UTC
+OnCalendar=*-*-* 00/6:00:00 UTC
 Persistent=true
 
 [Install]
 WantedBy=timers.target
 ```
 
-- `OnCalendar=*-*-* 03:30:00 UTC` means every day at 03:30 UTC. That hour is
-  chosen because traffic is low then.
-- `Persistent=true` means if the server was switched off at 03:30 and missed a
-  run, it does that run once at the next boot, so a powered-down night does not
-  silently skip a day.
+- `OnCalendar=*-*-* 00/6:00:00 UTC` means every 6 hours, at 00:00, 06:00,
+  12:00, and 18:00 UTC.
+- `Persistent=true` means if the server was switched off during a scheduled
+  time and missed a run, it does that run once at the next boot, so a
+  powered-down stretch does not silently skip a backup.
 - `WantedBy=timers.target` is what makes the timer start automatically on boot
   once you enable it.
 
@@ -106,7 +106,7 @@ The service file (`produce-db-backup.service`) holds what to run:
 
 ```ini
 [Unit]
-Description=Daily PostgreSQL backup for Local Produce Exchange
+Description=PostgreSQL backup for Local Produce Exchange
 Wants=docker.service
 After=docker.service
 
@@ -136,7 +136,7 @@ Here is the full script, followed by an explanation of each part.
 
 ```bash
 #!/usr/bin/env bash
-# Daily backup of the Local Produce Exchange database.
+# Backup of the Local Produce Exchange database, taken every 6 hours.
 # Runs as the deploy user via the produce-db-backup systemd timer.
 set -euo pipefail
 
@@ -294,7 +294,7 @@ it immediately so you do not have to reboot.
 
 ### Step 5: Run one backup by hand to prove it works
 
-You do not have to wait until 03:30 to test. Run the script directly:
+You do not have to wait for the next scheduled run to test. Run the script directly:
 
 ```
 ssh vps2 "sudo -u deploy /opt/produce-exchange/backup-db.sh"
@@ -318,7 +318,8 @@ See when the next run is scheduled and when the last one fired:
 ssh vps2 "systemctl list-timers produce-db-backup.timer --all"
 ```
 
-The `NEXT` column should show an upcoming 03:30 UTC time. If your server's clock
+The `NEXT` column should show an upcoming run at the next 6-hour boundary
+(00:00, 06:00, 12:00, or 18:00 UTC). If your server's clock
 is not UTC and the time looks off, add `TZ=UTC` in front:
 `ssh vps2 "TZ=UTC systemctl list-timers produce-db-backup.timer --all"`.
 
@@ -347,10 +348,11 @@ ssh vps2 "sudo -u deploy ls -la /opt/produce-exchange/backups"
 
 Confirm the 30-day cleanup is trimming old dumps. Two ways:
 
-- Over time, the file count settles near 30 and stays there. Each new daily
-  dump is matched by one that ages past 30 days and gets deleted, so the
-  "N backups on disk" number in the summary line plateaus. If it climbs past
-  about 31 and keeps going, the cleanup is not running.
+- Over time, the file count settles near 120 (about four dumps a day kept for
+  30 days) and stays there. Each new dump is matched by one that ages past 30
+  days and gets deleted, so the "N backups on disk" number in the summary line
+  plateaus. If it climbs well past about 120 and keeps going, the cleanup is
+  not running.
 
 - Without waiting a month, prove it on demand. On the server as `deploy`, plant
   a file with an old timestamp, run the backup, and watch it disappear:
@@ -506,7 +508,7 @@ ssh vps2 "sudo journalctl -u produce-db-backup.service -n 50 --no-pager"
 This backup protects against **logical loss**: a bad migration, an accidental
 `DELETE`, a wrong `UPDATE`, a table dropped by mistake. In all of those the
 server is fine and you restore from a recent snapshot. The most you lose is the
-changes made since the last daily run, up to about a day.
+changes made since the last run, up to about 6 hours.
 
 It does **not** protect against losing the whole server or its disk, because
 every copy lives on that one box. If the server itself is destroyed, the backups
