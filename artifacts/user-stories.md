@@ -530,7 +530,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Source use case:** UC-13 (Create a listing)  
 - **Priority:** high  
 - **Actor:** poster  
-- **Milestone:** Full features (R2)
+- **Milestone:** Current scope (R1)
 
 **Story:** As a poster, I want to post a new listing with the required details so that other members can find and request the item.
 
@@ -612,7 +612,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Source use case:** UC-15 (Deactivate own listing)  
 - **Priority:** medium  
 - **Actor:** poster  
-- **Milestone:** Full features (R2)
+- **Milestone:** Current scope (R1)
 
 **Story:** As a poster, I want to deactivate one of my listings so that no new requests can be made on it.
 
@@ -643,7 +643,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Source use case:** UC-16 (Confirm pickup)  
 - **Priority:** high  
 - **Actor:** recipient  
-- **Milestone:** Full features (R2)
+- **Milestone:** Current scope (R1)
 
 **Story:** As a recipient, I want to confirm that I picked up the item so that the exchange can be completed.
 
@@ -675,7 +675,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - **Source use case:** UC-17 (Complete an exchange)  
 - **Priority:** high  
 - **Actor:** poster  
-- **Milestone:** Full features (R2)
+- **Milestone:** Current scope (R1)
 
 **Story:** As a poster, I want to mark a picked-up exchange as completed so that both parties can leave a review.
 
