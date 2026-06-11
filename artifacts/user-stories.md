@@ -240,9 +240,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Photos are not part of the current listing detail view in this slice.
 
-#### US-30: View another member’s public profile
+#### US-08: View another member’s public profile
 
-- **Source use case:** UC-26 (View another member’s public profile)  
+- **Source use case:** UC-08 (View another member’s public profile)  
 - **Priority:** low  
 - **Actor:** member  
 - **Milestone:** Full Features (R2)
@@ -275,9 +275,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.3 Request queue
 
-#### US-08: Submit a request for an item
+#### US-09: Submit a request for an item
 
-- **Source use case:** UC-08 (Submit a request for an item)  
+- **Source use case:** UC-09 (Submit a request for an item)  
 - **Priority:** high  
 - **Actor:** recipient  
 - **Milestone:** Current scope (R1)
@@ -327,9 +327,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - This story models the requirements Sample User Story \#1, adapted to the request-queue scope.
 
-#### US-09: View the request queue for a listing
+#### US-10: View the request queue for a listing
 
-- **Source use case:** UC-09 (View the request queue for a listing)  
+- **Source use case:** UC-10 (View the request queue for a listing)  
 - **Priority:** high  
 - **Actor:** poster  
 - **Milestone:** Current scope (R1)
@@ -356,9 +356,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - When that member attempts to view the listing's queue  
 - Then the system denies access
 
-#### US-10: Approve or deny a pending request
+#### US-11: Approve or deny a pending request
 
-- **Source use case:** UC-10 (Approve or deny the next request in the queue)  
+- **Source use case:** UC-11 (Approve or deny the next request in the queue)  
 - **Priority:** high  
 - **Actor:** poster  
 - **Milestone:** Current scope (R1)
@@ -413,9 +413,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - The poster handles requests in the order they are received.   
 - Approve and deny are two outcomes of one decision, so they are scenarios in this one story, not separate stories.
 
-#### US-11: Withdraw a queued request
+#### US-12: Withdraw a queued request
 
-- **Source use case:** UC-11 (Withdraw a queued request)  
+- **Source use case:** UC-12 (Withdraw a queued request)  
 - **Priority:** medium  
 - **Actor:** recipient  
 - **Milestone:** Current scope (R1)
@@ -450,9 +450,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Only a pending request can be withdrawn.
 
-#### US-26: Cancel an approved request
+#### US-13: Cancel an approved request
 
-- **Source use case:** UC-11 (Withdraw a queued request)  
+- **Source use case:** UC-12 (Withdraw a queued request)  
 - **Priority:** medium  
 - **Actor:** recipient  
 - **Milestone:** Follow up scope (R2)
@@ -489,9 +489,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.4 Coordination
 
-#### US-12: Send and read messages in the exchange thread
+#### US-14: Send and read messages in the exchange thread
 
-- **Source use case:** UC-12 (Send and read messages in the exchange thread)  
+- **Source use case:** UC-13 (Send and read messages in the exchange thread)  
 - **Priority:** medium  
 - **Actor:** member  
 - **Milestone:** Current scope (R1)
@@ -525,12 +525,12 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.5 Listings
 
-#### US-13: Create a listing
+#### US-15: Create a listing
 
-- **Source use case:** UC-13 (Create a listing)  
+- **Source use case:** UC-14 (Create a listing)  
 - **Priority:** high  
 - **Actor:** poster  
-- **Milestone:** Current scope (R1)
+- **Milestone:** Full features (R2)
 
 **Story:** As a poster, I want to post a new listing with the required details so that other members can find and request the item.
 
@@ -560,12 +560,12 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- Optional photo uploads during create are covered by US-25.  
+- Optional photo uploads during create are covered by US-30.  
 - The listing's remaining quantity starts equal to the quantity available.
 
-#### US-14: Edit a listing
+#### US-16: Edit a listing
 
-- **Source use case:** UC-14 (Edit a listing)  
+- **Source use case:** UC-15 (Edit a listing)  
 - **Priority:** medium  
 - **Actor:** poster  
 - **Milestone:** Full features (R2)
@@ -605,14 +605,14 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 **Notes / open questions / assumptions**
 
-- Adding, replacing, or removing photos during edit is covered by US-25.
+- Adding, replacing, or removing photos during edit is covered by US-30.
 
-#### US-15: Deactivate own listing
+#### US-17: Deactivate own listing
 
-- **Source use case:** UC-15 (Deactivate own listing)  
+- **Source use case:** UC-16 (Deactivate own listing)  
 - **Priority:** medium  
 - **Actor:** poster  
-- **Milestone:** Current scope (R1)
+- **Milestone:** Full features (R2)
 
 **Story:** As a poster, I want to deactivate one of my listings so that no new requests can be made on it.
 
@@ -638,12 +638,12 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.6 Pickup and completion
 
-#### US-16: Confirm pickup
+#### US-18: Confirm pickup
 
-- **Source use case:** UC-16 (Confirm pickup)  
+- **Source use case:** UC-17 (Confirm pickup)  
 - **Priority:** high  
 - **Actor:** recipient  
-- **Milestone:** Current scope (R1)
+- **Milestone:** Full features (R2)
 
 **Story:** As a recipient, I want to confirm that I picked up the item so that the exchange can be completed.
 
@@ -670,12 +670,12 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies the action  
 - And nothing changes
 
-#### US-17: Complete an exchange
+#### US-19: Complete an exchange
 
-- **Source use case:** UC-17 (Complete an exchange)  
+- **Source use case:** UC-18 (Complete an exchange)  
 - **Priority:** high  
 - **Actor:** poster  
-- **Milestone:** Current scope (R1)
+- **Milestone:** Full features (R2)
 
 **Story:** As a poster, I want to mark a picked-up exchange as completed so that both parties can leave a review.
 
@@ -705,9 +705,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.7 Reviews
 
-#### US-18: Leave a rating and review after completion
+#### US-20: Leave a rating and review after completion
 
-- **Source use case:** UC-18 (Leave a rating and review after completion)  
+- **Source use case:** UC-19 (Leave a rating and review after completion)  
 - **Priority:** medium  
 - **Actor:** member  
 - **Milestone:** Full features (R2)
@@ -747,9 +747,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies access  
 - And no review is saved
 
-#### US-19: View reviews for a completed exchange
+#### US-21: View reviews for a completed exchange
 
-- **Source use case:** UC-19 (View reviews for a completed exchange)  
+- **Source use case:** UC-20 (View reviews for a completed exchange)  
 - **Priority:** low  
 - **Actor:** member  
 - **Milestone:** Full features (R2)
@@ -783,9 +783,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.8 Notifications and dashboard
 
-#### US-20: View status notifications
+#### US-22: View status notifications
 
-- **Source use case:** UC-20 (View status notifications)  
+- **Source use case:** UC-21 (View status notifications)  
 - **Priority:** medium  
 - **Actor:** member  
 - **Milestone:** Full features (R2)
@@ -812,9 +812,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Email or SMS notifications are out of scope for this story set.
 
-#### US-28: Mark a notification as read
+#### US-23: Mark a notification as read
 
-- **Source use case:** UC-20   
+- **Source use case:** UC-21  
 - **Priority:** low  
 - **Actor:** member  
 - **Milestone:** Full features (R2)
@@ -842,9 +842,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 - Confirm whether notifications should be deleted or marked as read for system.
 
-#### US-21: View my dashboard and activity overview
+#### US-24: View my dashboard and activity overview
 
-- **Source use case:** UC-21 (View my dashboard and activity overview)  
+- **Source use case:** UC-22 (View my dashboard and activity overview)  
 - **Priority:** high  
 - **Actor:** member  
 - **Milestone:** Full features (R2)
@@ -868,9 +868,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.9 Admin
 
-#### US-22: Suspend a user
+#### US-25: Suspend a user
 
-- **Source use case:** UC-22 (Suspend a user)  
+- **Source use case:** UC-23 (Suspend a user)  
 - **Priority:** medium  
 - **Actor:** admin  
 - **Milestone:** Full features (R2)
@@ -894,9 +894,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies the action  
 - And nothing changes
 
-#### US-27: Unsuspend a user
+#### US-26: Unsuspend a user
 
-- **Source use case:** UC-22 (Suspend a user)  
+- **Source use case:** UC-23 (Suspend a user)  
 - **Priority:** medium  
 - **Actor:** admin  
 - **Milestone:** Full features (R2)
@@ -920,9 +920,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies the action  
 - And nothing changes
 
-#### US-23: Deactivate a listing as admin
+#### US-27: Deactivate a listing as admin
 
-- **Source use case:** UC-23 (Deactivate a listing as admin)  
+- **Source use case:** UC-24 (Deactivate a listing as admin)  
 - **Priority:** medium  
 - **Actor:** admin  
 - **Milestone:** Full features (R2)
@@ -946,9 +946,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 - Then the system denies the action  
 - And nothing changes
 
-#### US-24: Generate basic reports
+#### US-28: Generate basic reports
 
-- **Source use case:** UC-24 (Generate basic reports)  
+- **Source use case:** UC-25 (Generate basic reports)  
 - **Priority:** low  
 - **Actor:** admin  
 - **Milestone:** Full features (R2)
@@ -972,7 +972,7 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 #### US-29: View member profile as admin
 
-- **Source use case:** UC-25 (View member profile as admin)  
+- **Source use case:** UC-26 (View member profile as admin)  
 - **Priority:** medium  
 - **Actor:** admin  
 - **Milestone:** Full features (R2)
@@ -1010,9 +1010,9 @@ Scenarios cover the normal path, and add edge or error, workflow, and permission
 
 ### 2.10 Listing photos
 
-#### US-25: Add and manage listing photos
+#### US-30: Add and manage listing photos
 
-- **Source use case:** UC-13 (optional photos during create), UC-14 (add, replace, or remove photos during edit)  
+- **Source use case:** UC-14 (optional photos during create), UC-15 (add, replace, or remove photos during edit)  
 - **Priority:** low  
 - **Actor:** poster  
 - **Milestone:** Full features (R2)

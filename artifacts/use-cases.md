@@ -145,7 +145,7 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Postconditions: The Member has seen the listing's full details.  
 - Related user stories: US-07.
 
-#### Use Case UC-26: View another member’s public profile
+#### Use Case UC-08: View another member’s public profile
 
 - Primary actor: Member  
 - Supporting actors: System (returns the profile)  
@@ -159,11 +159,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A member attempts to access this view without being logged in: system denies access.  
   - A member views their own profile: the system shows their own public profile the same way another member would see it.  
 - Postconditions: The Member has seen the member’s public profile and review history.  
-- Related user stories: US-30.
+- Related user stories: US-08.
 
 ### 3.3 Request queue
 
-#### Use Case UC-08: Submit a request for an item
+#### Use Case UC-09: Submit a request for an item
 
 - Primary actor: Recipient  
 - Supporting actors: Poster (owns the listing); System (checks quantity, queues the request, notifies the Poster)  
@@ -181,9 +181,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - Requested amount is zero or negative: the system rejects it and shows a validation error.  
   - The Recipient already has a pending request on this listing: the system prevents a duplicate request.  
 - Postconditions: A request exists with status REQUESTED, queued in the order it was received, and the Poster has been notified.  
-- Related user stories: US-08.
+- Related user stories: US-09.
 
-#### Use Case UC-09: View the request queue for a listing
+#### Use Case UC-10: View the request queue for a listing
 
 - Primary actor: Poster  
 - Supporting actors: System (returns the queue)  
@@ -197,9 +197,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who does not own the listing tries to view its queue: the system denies access.  
   - There are no pending requests: the system shows an empty queue.  
 - Postconditions: The Poster has seen the current request queue.  
-- Related user stories: US-09.
+- Related user stories: US-10.
 
-#### Use Case UC-10: Approve or deny the next request in the queue
+#### Use Case UC-11: Approve or deny the next request in the queue
 
 - Primary actor: Poster  
 - Supporting actors: Recipient (the requester); System (checks quantity, updates status, notifies the Recipient)  
@@ -217,9 +217,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who does not own the listing tries to handle the request: the system denies access.  
   - The request is not in REQUESTED status: the system rejects the action.  
 - Postconditions: The request has status APPROVED or DENIED, the remaining quantity reflects any approval, and the Recipient has been notified. A denial is final: the request cannot change status again.  
-- Related user stories: US-10.
+- Related user stories: US-11.
 
-#### Use Case UC-11: Withdraw a queued request
+#### Use Case UC-12: Withdraw a queued request
 
 - Primary actor: Recipient  
 - Supporting actors: Poster (the other party); System (updates status, removes the request from the queue, notifies the Poster)  
@@ -235,11 +235,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is already APPROVED or DENIED: the system rejects the withdrawal.  
   - A Member who is not the requester tries to withdraw: the system denies the action.  
 - Postconditions: The request has status CANCELLED, which is final, it is no longer in the queue, and the Poster has been notified. The remaining quantity is unchanged.  
-- Related user stories: US-11.
+- Related user stories: US-12, US-13.
 
 ### 3.4 Coordination
 
-#### Use Case UC-12: Send and read messages in the exchange thread
+#### Use Case UC-13: Send and read messages in the exchange thread
 
 - Primary actor: Member (the Poster or the Recipient for the exchange)  
 - Supporting actors: System (stores and delivers the message)  
@@ -255,11 +255,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who is not the Poster or the Recipient for that exchange tries to open the thread: the system denies access.  
   - The message is empty: the system rejects it.  
 - Postconditions: The message is saved to the exchange thread and visible to both parties.  
-- Related user stories: US-12.
+- Related user stories: US-14.
 
 ### 3.5 Listings
 
-#### Use Case UC-13: Create a listing
+#### Use Case UC-14: Create a listing
 
 - Primary actor: Poster  
 - Supporting actors: System (saves the listing)  
@@ -276,9 +276,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The Poster also adds one or more optional photos: the system stores the photos with the listing.  
   - The member is suspended: the system denies the action and creates no listing.  
 - Postconditions: A new active listing exists with the entered details.  
-- Related user stories: US-13, US-25.
+- Related user stories: US-15, US-30.
 
-#### Use Case UC-14: Edit a listing
+#### Use Case UC-15: Edit a listing
 
 - Primary actor: Poster  
 - Supporting actors: System (saves the changes)  
@@ -296,9 +296,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member tries to edit a listing they do not own: the system denies the action.  
   - The member is suspended: the system denies the action and saves no change.  
 - Postconditions: The listing reflects the saved changes.  
-- Related user stories: US-14, US-25.
+- Related user stories: US-16, US-30.
 
-#### Use Case UC-15: Deactivate own listing
+#### Use Case UC-16: Deactivate own listing
 
 - Primary actor: Poster  
 - Supporting actors: System (hides the listing)  
@@ -312,11 +312,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A Member tries to deactivate a listing they do not own: the system denies the action.  
 - Postconditions: The listing is inactive and no longer appears in browsing.  
-- Related user stories: US-15.
+- Related user stories: US-17.
 
 ### 3.6 Pickup and completion
 
-#### Use Case UC-16: Confirm pickup
+#### Use Case UC-17: Confirm pickup
 
 - Primary actor: Recipient  
 - Supporting actors: Poster (the other party); System (updates status, notifies the Poster)  
@@ -332,9 +332,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is not in APPROVED status: the system rejects the action and changes nothing.  
   - A Member who is not the requester tries to confirm pickup: the system denies the action.  
 - Postconditions: The request has status PICKED\_UP and the Poster has been notified.  
-- Related user stories: US-16.
+- Related user stories: US-18.
 
-#### Use Case UC-17: Complete an exchange
+#### Use Case UC-18: Complete an exchange
 
 - Primary actor: Poster  
 - Supporting actors: Recipient (the other party); System (updates status, notifies the Recipient)  
@@ -350,11 +350,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - The request is not in PICKED\_UP status: the system rejects the action.  
   - A Member who does not own the listing tries to complete the exchange: the system denies the action.  
 - Postconditions: The request has status COMPLETED and the Recipient has been notified.  
-- Related user stories: US-17.
+- Related user stories: US-19.
 
 ### 3.7 Reviews
 
-#### Use Case UC-18: Leave a rating and review after completion
+#### Use Case UC-19: Leave a rating and review after completion
 
 - Primary actor: Member (acting as the reviewer)  
 - Supporting actors: System (saves the review and makes it visible to the reviewed party)  
@@ -371,9 +371,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - A Member who is not a participant tries to review: the system denies access.  
   - The Member has already reviewed the other party for this exchange: the system rejects the duplicate review.  
 - Postconditions: The review is saved, linked to the completed exchange, and visible to the reviewed party.  
-- Related user stories: US-18.
+- Related user stories: US-20.
 
-#### Use Case UC-19: View reviews for a completed exchange
+#### Use Case UC-20: View reviews for a completed exchange
 
 - Primary actor: Member  
 - Supporting actors: System (returns the reviews)  
@@ -387,11 +387,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
   - No review has been left yet: the system shows that there are no reviews yet.  
   - A Member who is not a participant tries to view the reviews: the system denies access.  
 - Postconditions: The Member has seen the reviews for the completed exchange.  
-- Related user stories: US-19.
+- Related user stories: US-21.
 
 ### 3.8 Notifications and dashboard
 
-#### Use Case UC-20: View status notifications
+#### Use Case UC-21: View status notifications
 
 - Primary actor: Member  
 - Supporting actors: System (returns the notifications)  
@@ -405,9 +405,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - There are no notifications: the system shows an empty list.  
 - Postconditions: The Member has seen their current notifications.  
-- Related user stories: US-20.
+- Related user stories: US-22, US-23.
 
-#### Use Case UC-21: View my dashboard and activity overview
+#### Use Case UC-22: View my dashboard and activity overview
 
 - Primary actor: Member  
 - Supporting actors: System (gathers the member's activity)  
@@ -421,11 +421,11 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - The Member has no activity yet: the system shows empty groups.  
 - Postconditions: The Member has seen their current activity overview.  
-- Related user stories: US-21.
+- Related user stories: US-24.
 
 ### 3.9 Admin
 
-#### Use Case UC-22: Suspend a user
+#### Use Case UC-23: Suspend a user
 
 - Primary actor: Admin  
 - Supporting actors: System (updates the account)  
@@ -439,9 +439,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to suspend a user: the system denies the action.  
 - Postconditions: The account is suspended and cannot log in or take member actions.  
-- Related user stories: US-22.
+- Related user stories: US-25, US-26.
 
-#### Use Case UC-23: Deactivate a listing as admin
+#### Use Case UC-24: Deactivate a listing as admin
 
 - Primary actor: Admin  
 - Supporting actors: System (hides the listing, keeps audit history)  
@@ -455,9 +455,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to deactivate a listing as admin: the system denies the action.  
 - Postconditions: The listing is hidden from browsing and its audit history is kept.  
-- Related user stories: US-23.
+- Related user stories: US-27.
 
-#### Use Case UC-24: Generate basic reports
+#### Use Case UC-25: Generate basic reports
 
 - Primary actor: Admin  
 - Supporting actors: System (computes and returns the report)  
@@ -471,9 +471,9 @@ These are the roles the system defines. Poster and Recipient are not separate ac
 - Alternate and exception flows:  
   - A non-admin user tries to generate a report: the system denies the action.  
 - Postconditions: The Admin has seen the generated report.  
-- Related user stories: US-24.
+- Related user stories: US-28.
 
-#### Use Case UC-25: View member profile as admin
+#### Use Case UC-26: View member profile as admin
 
 - Primary actor: Admin  
 - Supporting actors: System (returns full account details)  
